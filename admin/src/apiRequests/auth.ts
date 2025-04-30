@@ -31,10 +31,10 @@ const authApiRequest = {
 
   logout: () =>
     http.post<IBackendRes<any>>(
-      "/api/auth/logout",
+      "/api/logout",
       {},
       {
-        baseUrl: "",
+        baseUrl: "http://127.0.0.1:8000",
       }
     ),
 

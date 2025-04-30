@@ -40,19 +40,6 @@ export const normalizePath = (path: string) => {
   return path.startsWith("/") ? path.slice(1) : path;
 };
 
-type PayloadJWT = {
-  uid: string;
-  sub: string;
-  scope: string;
-  name: string;
-  no_password: boolean;
-  image: string;
-  iss: string;
-  exp: number;
-  iat: number;
-  jti: string;
-};
-
 export const convertToDate = (time: string) => {
   const formattedInput = time.slice(0, 23);
   const date = new Date(formattedInput);
@@ -76,6 +63,40 @@ export const setAccessTokenFormLocalStorage = (accessToken: string) => {
 
 export const setRefreshTokenFormLocalStorage = (refreshToken: string) => {
   isClient && localStorage.setItem("refreshToken", refreshToken);
+};
+
+export const setVenueSearchedFormLocalStorage = (venueId: string) => {
+  if (isClient) {
+    const storedIds = JSON.parse(
+      localStorage.getItem("venueIdSearched") || "[]"
+    );
+
+    if (!storedIds.includes(venueId)) {
+      storedIds.push(venueId);
+      localStorage.setItem("venueIdSearched", JSON.stringify(storedIds));
+    }
+  }
+};
+
+export const removeVenueSearchedFromLocalStorage = (venueId: string) => {
+  if (isClient) {
+    const storedIds = JSON.parse(
+      localStorage.getItem("venueIdSearched") || "[]"
+    );
+
+    const updatedIds = storedIds.filter((id: string) => id !== venueId);
+    if (updatedIds.length === 0) {
+      localStorage.removeItem("venueIdSearched");
+    } else {
+      localStorage.setItem("venueIdSearched", JSON.stringify(updatedIds));
+    }
+  }
+};
+
+export const getVenueSearchedFormLocalStorage = () => {
+  return (
+    isClient && JSON.parse(localStorage.getItem("venueIdSearched") || "[]")
+  );
 };
 
 export const removeTokenFormLocalStorage = () => {

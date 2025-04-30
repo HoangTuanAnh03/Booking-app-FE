@@ -6,25 +6,27 @@ declare global {
     message: string;
     status: number;
     data?: T;
-  }
+  };
 
   type IModelPaginate<T> = {
-    meta: {
-      page: number;
-      pageSize: number;
-      pages: number;
-      total: number;
-    };
-    result: T[];
-  }
+    current_page: number;
+    data: T;
+    first_page_url: string;
+    from: number;
+    last_page: number;
+    last_page_url: string;
+    links: PaginationLink[];
+    next_page_url: string | null;
+    path: string;
+    per_page: number;
+    prev_page_url: string | null;
+    to: number;
+    total: number;
+  };
 
-  type IModelPaginateRequest = {
-    page: number;
-    size: number;
-    sort: string[];
-  }
-
-  type IModelSpecificationRequest = {
-    filter: string;
-  }
+  type PaginationLink = {
+    url: string | null;
+    label: string;
+    active: boolean;
+  };
 }

@@ -1,5 +1,10 @@
 import envConfig from "@/config";
-import { normalizePath, removeTokenFormLocalStorage, setAccessTokenFormLocalStorage, setRefreshTokenFormLocalStorage } from "@/lib/utils";
+import {
+  normalizePath,
+  removeTokenFormLocalStorage,
+  setAccessTokenFormLocalStorage,
+  setRefreshTokenFormLocalStorage,
+} from "@/lib/utils";
 import { LoginResType } from "@/schemaValidations/auth.schema";
 import { redirect } from "next/navigation";
 
@@ -66,11 +71,12 @@ const request = async <Response>(
     body instanceof FormData
       ? {}
       : {
-          "Accept": "application/json",
+          Accept: "application/json",
           "Content-Type": "application/json",
-          'Access-Control-Allow-Origin': '*',
+          "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "DELETE, POST, GET, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With"
+          "Access-Control-Allow-Headers":
+            "Content-Type, Authorization, X-Requested-With",
         };
   if (isClient) {
     const accessToken = localStorage.getItem("accessToken");
@@ -83,7 +89,7 @@ const request = async <Response>(
 
   const baseUrl =
     options?.baseUrl === undefined
-      ? envConfig.NEXT_PUBLIC_API_ENDPOINT
+      ? "http://127.0.0.1:8000/api"
       : options.baseUrl;
 
   const fullUrl = `${baseUrl}/${normalizePath(url)}`;
@@ -97,7 +103,7 @@ const request = async <Response>(
     body,
     method,
   });
-  
+
   const payload: Response = await res.json();
 
   const data = {
@@ -113,7 +119,10 @@ const request = async <Response>(
           payload: EntityErrorPayload;
         }
       );
-    } else if (res.status === AUTHENTICATION_ERROR_STATUS && !url.includes("/login")) {
+    } else if (
+      res.status === AUTHENTICATION_ERROR_STATUS &&
+      !url.includes("/login")
+    ) {
       if (isClient) {
         if (!clientLogoutRequest) {
           clientLogoutRequest = fetch("/api/auth/logout", {
@@ -127,7 +136,7 @@ const request = async <Response>(
             await clientLogoutRequest;
           } catch (error) {
           } finally {
-            removeTokenFormLocalStorage()
+            removeTokenFormLocalStorage();
             clientLogoutRequest = null;
             location.href = "/login";
           }
@@ -148,16 +157,16 @@ const request = async <Response>(
   // Đảm bảo logic dưới đây chỉ chạy ở phía client (browser)
   if (res.ok && isClient) {
     if (
-      ["api/auth/login", "api/auth/verify/register", "api/auth/refresh-token"].some((item) =>
-        normalizePath(url).startsWith(item)
-      )
+      [
+        "api/auth/login",
+        "api/auth/verify/register",
+        "api/auth/refresh-token",
+      ].some((item) => normalizePath(url).startsWith(item))
     ) {
-      const { access_token } = (
-        payload as IBackendRes<LoginResType>
-      ).data!;
-      setAccessTokenFormLocalStorage(access_token)
+      const { access_token } = (payload as IBackendRes<LoginResType>).data!;
+      setAccessTokenFormLocalStorage(access_token);
     } else if ("api/auth/logout" === normalizePath(url)) {
-      removeTokenFormLocalStorage()
+      removeTokenFormLocalStorage();
     }
   }
   return data;

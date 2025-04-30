@@ -7,8 +7,11 @@ export async function POST(request: Request) {
   const cookieStore = cookies();
   const { payload, status } = await authApiRequest.sLogin(body);
 
+  console.log("payload??>>>>>>>>>>>>>", payload);
+
   if (status == 200) {
     const { access_token } = payload.data!;
+    console.log("🚀 ~ POST ~ access_token:", access_token);
     const now = new Date();
     cookieStore.set("accessToken", access_token, {
       path: "/",
@@ -19,6 +22,6 @@ export async function POST(request: Request) {
     });
   }
   return Response.json(payload, {
-    status: status,
+    status: 200,
   });
 }

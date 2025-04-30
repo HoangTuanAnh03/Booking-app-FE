@@ -2,6 +2,7 @@
 import userApiRequest from "@/apiRequests/users";
 import {
   getAccessTokenFormLocalStorage,
+  removeTokenFormLocalStorage,
 } from "@/lib/utils";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -23,7 +24,7 @@ type AppStoreType = {
   image: string;
   setImage: (image: string) => void;
   name: string;
-  setName: (name: string) => void;
+  setName: (name?: string | undefined) => void;
 };
 
 export const useAppStore = create<AppStoreType>((set) => ({
@@ -33,8 +34,11 @@ export const useAppStore = create<AppStoreType>((set) => ({
     set({ image: image });
   },
   name: "",
-  setName: (name: string) => {
-    set({ name: name });
+  setName: (name?: string | undefined) => {
+    set({ name: name, isAuth: Boolean(name) });
+    if (!name) {
+      removeTokenFormLocalStorage();
+    }
   },
 }));
 

@@ -83,7 +83,7 @@ const request = async <Response>(
 
   const baseUrl =
     options?.baseUrl === undefined
-      ? envConfig.NEXT_PUBLIC_API_ENDPOINT
+      ? "http://127.0.0.1:8000/api"
       : options.baseUrl;
 
   const fullUrl = `${baseUrl}/${normalizePath(url)}`;

@@ -5,6 +5,8 @@ const configSchema = z.object({
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
   NEXT_PUBLIC_GOOGLE_REDIRECT_URI: z.string(),
   NEXT_PUBLIC_GOOGLE_AUTH_URI: z.string(),
+  NEXT_PUBLIC_MAP_KEY: z.string(),
+  NEXT_PUBLIC_MAP_URL: z.string(),
 })
 
 const configProject = configSchema.safeParse({
@@ -12,6 +14,8 @@ const configProject = configSchema.safeParse({
   NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
   NEXT_PUBLIC_GOOGLE_REDIRECT_URI: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URI,
   NEXT_PUBLIC_GOOGLE_AUTH_URI: process.env.NEXT_PUBLIC_GOOGLE_AUTH_URI,
+  NEXT_PUBLIC_MAP_KEY: process.env.NEXT_PUBLIC_MAP_KEY,
+  NEXT_PUBLIC_MAP_URL: process.env.NEXT_PUBLIC_MAP_URL,
 })
 if (!configProject.success) {
   console.error(configProject.error.issues)

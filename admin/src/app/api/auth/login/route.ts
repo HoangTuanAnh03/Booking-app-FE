@@ -3,14 +3,25 @@ import { LoginBodyType } from "@/schemaValidations/auth.schema";
 import { cookies } from "next/headers";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as LoginBodyType;
-  const cookieStore = cookies();
-  const { payload, status } = await authApiRequest.sLogin(body);
+  const body = await request.json();
 
-  if (status == 200) {
-    const { access_token } = payload.data!;
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  const payload = await res.json();
+
+  if (res.status === 200 && payload?.data?.access_token) {
+    const { access_token } = payload.data;
     const now = new Date();
-    cookieStore.set("accessToken", access_token, {
+
+    // Lưu token vào cookie
+    cookies().set("accessToken", access_token, {
       path: "/",
       httpOnly: true,
       sameSite: true,
@@ -18,7 +29,8 @@ export async function POST(request: Request) {
       expires: new Date(now.setDate(now.getDate() + 30)),
     });
   }
+
   return Response.json(payload, {
-    status: status,
+    status: res.status,
   });
 }

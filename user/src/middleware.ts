@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const privatePaths = ['/me', '/dashboard', '/users',]
-const authPaths = ['/login', '/register',  '/verify']
+const authPaths = ['/login', '/register',  '/verify', '/map']
 
 export function middleware(request: NextRequest) {
 
@@ -24,6 +24,6 @@ export function middleware(request: NextRequest) {
 // See "Matching Paths" below to learn more
 export const config = {
   matcher: [ '/me', '/dashboard', '/users',
-    '/login', '/register',  '/verify'
+    '/login', '/register',  '/verify', '/map'
   ]
 }

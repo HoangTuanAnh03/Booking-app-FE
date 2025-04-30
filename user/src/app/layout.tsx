@@ -4,6 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import AppProvider from "@/components/app-provider";
+import Header from "@/components/layout/header";
 
 const inter = Inter({ subsets: ["vietnamese"] });
 
@@ -27,8 +28,8 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <AppProvider>
-            {/* <Header /> */}
             <Toaster />
+            <Header />
             {children}
           </AppProvider>
         </ThemeProvider>

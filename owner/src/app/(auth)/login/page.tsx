@@ -4,9 +4,17 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import Google from "@/app/(auth)/login/google";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
   const UrlUser = process.env.NEXT_PUBLIC_USER_URL
+  const cookieStore = cookies();
+  const accessToken = cookieStore.get("accessToken")?.value;
+
+  if (accessToken) {
+    redirect("/venue");
+  }
   return (
     <div className="flex w-full justify-center text-[#121212] bg-cover "
       style={{
