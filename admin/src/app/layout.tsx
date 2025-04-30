@@ -4,6 +4,9 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import AppProvider from "@/components/app-provider";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+// import AppSidebar from "@/components/app_sidebar";
+import { AppSidebar } from "@/components/app_sidebar";
 
 const inter = Inter({ subsets: ["vietnamese"] });
 
@@ -20,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>
+        
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -28,8 +32,12 @@ export default function RootLayout({
         >
           <AppProvider>
             {/* <Header /> */}
+            <SidebarProvider>
+            <AppSidebar/>
+            <SidebarTrigger />
             <Toaster />
-            {children}
+            <main className="flex-1">{children}</main>
+            </SidebarProvider>
           </AppProvider>
         </ThemeProvider>
       </body>
