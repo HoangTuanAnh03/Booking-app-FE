@@ -9,13 +9,11 @@ export const VenueItem = z.object({
   payment_status: z.string(),
 });
 
-// Response khi lấy danh sách các sân (array)
 export const VenueListRes = z.object({
   data: z.array(VenueItem),
   message: z.string(),
 }).strict();
 
-// Response khi lấy chi tiết activate 1 sân
 export const VenueActivateRes = z.object({
   data: z.object({
     venue_id: z.string(),
@@ -37,7 +35,6 @@ export const VenueActivateRes = z.object({
   message: z.string().optional(),
 }).strict();
 
-// Response khi get all venue từ `/admin/venues`
 export const VenueAllListRes = z.object({
   status: z.number(),
   message: z.string().nullable(),
@@ -65,7 +62,6 @@ export const VenueAllListRes = z.object({
 }).strict();
 
 
-// Các kiểu typescript từ schema
 export type VenueItemType = z.infer<typeof VenueItem>;
 export type VenueListResType = z.infer<typeof VenueListRes>;
 export type VenueActivateResType = z.infer<typeof VenueActivateRes>;

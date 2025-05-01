@@ -1,54 +1,65 @@
 "use client"
 
-import type React from "react"
-
+import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { BarChart3, Home, LayoutDashboard, Loader2, LogOut, Menu, PlusCircle, Settings, Trophy, Users } from "lucide-react"
+import {
+  LayoutDashboard,
+  BarChart3,
+  Trophy,
+  LogOut,
+  Menu,
+  MapPin,
+  Tag
+} from "lucide-react"
 import authApiRequest from "@/apiRequests/auth"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
-interface NavProps {
+interface NavItemProps {
+  icon: React.ElementType
+  title: string
+  href: string
   isCollapsed: boolean
-  links: {
-    title: string
-    label?: string
-    icon: React.ReactNode
-    variant: "default" | "ghost"
-    href: string
-  }[]
 }
 
-const logout = () => {
-  authApiRequest.logout();
-};
-export function Nav({ links, isCollapsed }: NavProps) {
+function NavItem({ icon: Icon, title, href, isCollapsed }: NavItemProps) {
   const pathname = usePathname()
+  const isActive = pathname.startsWith(href)
 
   return (
-    <div data-collapsed={isCollapsed} className="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2">
-      <nav className="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
-        {links.map((link, index) => (
+    <TooltipProvider delayDuration={0}>
+      <Tooltip>
+        <TooltipTrigger asChild>
           <Link
-            key={index}
-            href={link.href}
+            href={href}
             className={cn(
-              "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
-              pathname === link.href ? "bg-accent text-accent-foreground" : "transparent",
-              isCollapsed && "justify-center",
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all hover:bg-accent",
+              isCollapsed ? "justify-center" : "justify-start",
+              isActive && "bg-accent text-accent-foreground"
             )}
           >
-            {link.icon}
-            {!isCollapsed && <span>{link.title}</span>}
-            {!isCollapsed && link.label && <span className="ml-auto text-xs">{link.label}</span>}
+            <Icon className="h-4 w-4" />
+            {!isCollapsed && <span>{title}</span>}
           </Link>
-        ))}
-      </nav>
-    </div>
+        </TooltipTrigger>
+        {isCollapsed && <TooltipContent side="right">{title}</TooltipContent>}
+      </Tooltip>
+    </TooltipProvider>
   )
+}
+
+const navItems = [
+  { icon: LayoutDashboard, title: "Trang chủ", href: "/dashboard" },
+  { icon: BarChart3, title: "Quản lý người dùng", href: "/users" },
+  { icon: MapPin, title: "Quản lý sân", href: "/venues" },
+  { icon: Tag, title: "Quản lý thể loại sân", href: "/sporttype" },
+]
+
+const logout = () => {
+  authApiRequest.logout()
 }
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -56,7 +67,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b bg-background px-6">
+      {/* Header */}
+      <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-6">
+        {/* Mobile Menu */}
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="icon" className="md:hidden">
@@ -64,51 +77,89 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <span className="sr-only">Toggle Menu</span>
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-72">
+          <SheetContent side="left" className="w-72 md:hidden">
             <div className="flex h-16 items-center border-b px-6">
               <Link href="/" className="flex items-center gap-2 font-semibold">
                 <Trophy className="h-6 w-6" />
                 <span>Quản Lý Thể Thao</span>
               </Link>
             </div>
+            <nav className="mt-4 space-y-2">
+              {navItems.map((item) => (
+                <NavItem
+                  key={item.href}
+                  icon={item.icon}
+                  title={item.title}
+                  href={item.href}
+                  isCollapsed={false}
+                />
+              ))}
+            </nav>
           </SheetContent>
         </Sheet>
-        <div className="w-full flex justify-between items-center gap-2 md:gap-4">
+
+        {/* Logo & Logout */}
+        <div className="w-full h-10 flex justify-between items-center gap-2 md:gap-4">
           <Link href="/" className="flex items-center gap-2 font-semibold">
             <Trophy className="h-6 w-6" />
             <span className="hidden md:inline-block">AE booking - Admin</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="w-full hover:bg-primary hover:text-white transition-colors"
-              size="sm"
-              onClick={logout}
-            >
-              <>
-                <LogOut className="mr-2 h-4 w-4" />
-                Logout
-              </>
-            </Button>
-          </div>
+          <Button
+            variant="outline"
+            className="hover:bg-primary hover:text-white transition-colors"
+            size="sm"
+            onClick={logout}
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            Logout
+          </Button>
         </div>
       </header>
+
+      {/* Main Layout */}
       <div className="flex flex-1">
-        <aside className={cn("hidden border-r bg-background md:block", isCollapsed ? "w-[70px]" : "w-[240px]")}>
-          <div className="flex h-[calc(100vh-64px)] flex-col gap-4">
-            <div className="mt-auto p-4">
-              <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => setIsCollapsed(!isCollapsed)}>
-                {isCollapsed ? (
-                  <LayoutDashboard className="h-4 w-4 rotate-0 transition-all" />
-                ) : (
-                  <LayoutDashboard className="h-4 w-4 rotate-90 transition-all" />
-                )}
-                <span className="sr-only">Toggle Sidebar</span>
-              </Button>
-            </div>
+        {/* Sidebar for desktop */}
+        <aside
+          className={cn(
+            "fixed left-0 top-16 z-30 hidden md:flex h-[calc(100vh-64px)] flex-col border-r bg-background transition-all duration-300 ease-in-out",
+            isCollapsed ? "w-[70px]" : "w-[240px]"
+          )}
+        >
+          <div className="flex-1 px-3 py-4 space-y-1">
+            {navItems.map((item) => (
+              <NavItem
+                key={item.href}
+                icon={item.icon}
+                title={item.title}
+                href={item.href}
+                isCollapsed={isCollapsed}
+              />
+            ))}
+          </div>
+          <div className="mt-auto border-t p-4 flex justify-end">
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+            >
+              <LayoutDashboard
+                className={cn("h-4 w-4 transition-all", isCollapsed ? "rotate-0" : "rotate-90")}
+              />
+              <span className="sr-only">Toggle Sidebar</span>
+            </Button>
           </div>
         </aside>
-        <main className="flex-1 overflow-y-auto p-6 md:p-8">{children}</main>
+
+        {/* Page Content */}
+        <main
+          className={cn(
+            "flex-1 p-6 md:p-8 pt-24 transition-all",
+            isCollapsed ? "md:ml-[70px]" : "md:ml-[240px]"
+          )}
+        >
+          {children}
+        </main>
       </div>
     </div>
   )

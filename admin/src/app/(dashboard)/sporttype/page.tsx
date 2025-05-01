@@ -16,7 +16,6 @@ export default function HomePage() {
   }
 
   return (
-    <DashboardLayout>
     <div className="flex flex-col gap-6">
       <DashboardHeader heading="Quản Lý Loại Thể Thao" text="Xem và quản lý tất cả các loại thể thao trong hệ thống." />
       <Card>
@@ -30,7 +29,6 @@ export default function HomePage() {
         </CardContent>
       </Card>
     </div>
-    </DashboardLayout>
   )
 }
 

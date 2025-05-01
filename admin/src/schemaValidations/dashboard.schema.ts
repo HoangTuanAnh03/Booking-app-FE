@@ -1,6 +1,5 @@
 import { z } from 'zod'
 
-// --- Sub Schemas ---
 
 export const TotalRevenueItem = z.record(z.string(), z.number())
 
@@ -20,7 +19,6 @@ export const SportTypeItem = z.object({
   detail: z.array(SportTypeDetailItem),
 })
 
-// --- Main Schema ---
 
 export const DashboardRes = z.object({
   data: z.object({
@@ -31,7 +29,6 @@ export const DashboardRes = z.object({
   message: z.string(),
 }).strict()
 
-// --- Types ---
 
 export type TotalRevenueItemType = z.infer<typeof TotalRevenueItem>
 export type VenueItemType = z.infer<typeof VenueItem>

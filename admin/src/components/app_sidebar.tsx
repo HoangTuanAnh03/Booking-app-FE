@@ -31,6 +31,11 @@ const menuItems = [
     url: "/venues",
     icon: Landmark,
   },
+  {
+    title: "Quản lý thể loại sân",
+    url: "/sporttype",
+    icon: Landmark,
+  },
 ];
 
 export function AppSidebar() {
