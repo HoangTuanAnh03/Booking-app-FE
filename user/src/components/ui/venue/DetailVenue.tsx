@@ -2,17 +2,22 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ChevronLeft } from "lucide-react";
 import { useSideBarStore } from "@/stores/useSideBarStore";
 import { useGetVenueDetail } from "@/queries/useVenue";
 import { InfoDetailVenue } from "@/components/ui/venue/detail/Info";
 import { ReviewVenue } from "@/components/ui/venue/detail/Review";
+import FieldModal from "@/components/FieldModal";
+import {Field} from "@/types/field";
+import {useGetFieldByVenueId} from "@/queries/useField";
 
 export const DetailVenue = () => {
   const [detailVenue, setDetailVenue] = useState<Venue>();
   const venueIdSelected = useSideBarStore((state) => state.venueIdSelected);
+  const [fieldData, setFieldData] = useState<Field[]>([]);
+  const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
 
   const { data } = useGetVenueDetail(venueIdSelected ?? "");
+  const { data: fields } = useGetFieldByVenueId(venueIdSelected ?? "")
 
   useEffect(() => {
     if (data?.payload.data) {
@@ -50,6 +55,16 @@ export const DetailVenue = () => {
     }
   };
 
+  const showField = () => {
+    if(!detailVenue) return "";
+    const venueId = detailVenue.venue_id;
+    // const { data } = useGetFieldByVenueId(venueId);
+    if(fields?.payload.data) {
+      setFieldData(fields?.payload.data.data)
+      setIsFieldModalOpen(true);
+    }
+  }
+
   return (
     <>
       {/* Header */}
@@ -78,8 +93,8 @@ export const DetailVenue = () => {
       <div className="flex gap-6 w-full justify-between items-center p-4 pl-36">
         <div className="   ">
           <h1 className="text-xl font-bold text-gray-700">
-            {/* {detailVenue?.venue_name} */}
-            Venue 1 của Owner 111 Venue 1 của Owner 111
+             {detailVenue?.venue_name}
+            {/*Venue 1 của Owner 111 Venue 1 của Owner 111*/}
           </h1>
           <div className="flex items-center mt-1">
             {/* {[...Array(5)].map((_, i) => (
@@ -100,12 +115,22 @@ export const DetailVenue = () => {
             Chia sẻ
           </Button> */}
 
-          <Button className="bg-orange-500 hover:bg-orange-600">
-            Đặt lịch
+          <Button
+              className={`${
+                  detailVenue?.status !== 'active' ? 'bg-gray-500 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600'
+              }`}
+              onClick={detailVenue?.status === 'active' ? showField : undefined}
+              disabled={detailVenue?.status !== 'active'}
+          >
+            {detailVenue?.status !== 'active' ? 'Sân chưa hoạt động' : 'Đặt lịch'}
           </Button>
         </div>
       </div>
-
+      <FieldModal
+          data={fieldData}
+          isOpen={isFieldModalOpen}
+          setIsOpen={setIsFieldModalOpen}
+      />
       {/* Tabs */}
       <div className=" px-4">
         <Tabs defaultValue="info">

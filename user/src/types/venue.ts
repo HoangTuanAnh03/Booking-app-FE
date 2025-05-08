@@ -16,6 +16,7 @@ type Venue = {
   thumbnail: string;
   opening: string;
   closing: string;
+  status: string;
 };
 
 type CoordinateVenue = {
