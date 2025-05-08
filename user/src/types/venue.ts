@@ -3,7 +3,8 @@ type VenueMap = {
   venue_name: string;
   latitude: string;
   longitude: string;
-  address: string;
+  venue_address: string;
+  distance: number;
   sport_types: SportType[];
 };
 

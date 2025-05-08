@@ -7,7 +7,7 @@ export async function POST(request: Request) {
   const cookieStore = cookies();
   const { payload, status } = await authApiRequest.sLogin(body);
 
-  console.log("payload??>>>>>>>>>>>>>", payload);
+  console.log("payload??>>>>>>>>>>>>>tdf", payload);
 
   if (status == 200) {
     const { access_token } = payload.data!;
@@ -16,8 +16,8 @@ export async function POST(request: Request) {
     cookieStore.set("accessToken", access_token, {
       path: "/",
       httpOnly: true,
-      sameSite: true,
-      secure: true,
+      sameSite: 'lax',
+      secure: false,
       expires: new Date(now.setDate(now.getDate() + 30)),
     });
   }

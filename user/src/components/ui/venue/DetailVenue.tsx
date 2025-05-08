@@ -7,8 +7,8 @@ import { useGetVenueDetail } from "@/queries/useVenue";
 import { InfoDetailVenue } from "@/components/ui/venue/detail/Info";
 import { ReviewVenue } from "@/components/ui/venue/detail/Review";
 import FieldModal from "@/components/FieldModal";
-import {Field} from "@/types/field";
-import {useGetFieldByVenueId} from "@/queries/useField";
+import { Field } from "@/types/field";
+import { useGetFieldByVenueId } from "@/queries/useField";
 
 export const DetailVenue = () => {
   const [detailVenue, setDetailVenue] = useState<Venue>();
@@ -17,7 +17,7 @@ export const DetailVenue = () => {
   const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
 
   const { data } = useGetVenueDetail(venueIdSelected ?? "");
-  const { data: fields } = useGetFieldByVenueId(venueIdSelected ?? "")
+  const { data: fields } = useGetFieldByVenueId(venueIdSelected ?? "");
 
   useEffect(() => {
     if (data?.payload.data) {
@@ -56,14 +56,14 @@ export const DetailVenue = () => {
   };
 
   const showField = () => {
-    if(!detailVenue) return "";
+    if (!detailVenue) return "";
     const venueId = detailVenue.venue_id;
     // const { data } = useGetFieldByVenueId(venueId);
-    if(fields?.payload.data) {
-      setFieldData(fields?.payload.data.data)
+    if (fields?.payload.data) {
+      setFieldData(fields?.payload.data.data);
       setIsFieldModalOpen(true);
     }
-  }
+  };
 
   return (
     <>
@@ -93,7 +93,7 @@ export const DetailVenue = () => {
       <div className="flex gap-6 w-full justify-between items-center p-4 pl-36">
         <div className="   ">
           <h1 className="text-xl font-bold text-gray-700">
-             {detailVenue?.venue_name}
+            {detailVenue?.venue_name}
             {/*Venue 1 của Owner 111 Venue 1 của Owner 111*/}
           </h1>
           <div className="flex items-center mt-1">
@@ -116,23 +116,27 @@ export const DetailVenue = () => {
           </Button> */}
 
           <Button
-              className={`${
-                  detailVenue?.status !== 'active' ? 'bg-gray-500 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600'
-              }`}
-              onClick={detailVenue?.status === 'active' ? showField : undefined}
-              disabled={detailVenue?.status !== 'active'}
+            className={`${
+              detailVenue?.status !== "active"
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-orange-500 hover:bg-orange-600"
+            }`}
+            onClick={detailVenue?.status === "active" ? showField : undefined}
+            disabled={detailVenue?.status !== "active"}
           >
-            {detailVenue?.status !== 'active' ? 'Sân chưa hoạt động' : 'Đặt lịch'}
+            {detailVenue?.status !== "active"
+              ? "Sân chưa hoạt động"
+              : "Đặt lịch"}
           </Button>
         </div>
       </div>
       <FieldModal
-          data={fieldData}
-          isOpen={isFieldModalOpen}
-          setIsOpen={setIsFieldModalOpen}
+        data={fieldData}
+        isOpen={isFieldModalOpen}
+        setIsOpen={setIsFieldModalOpen}
       />
       {/* Tabs */}
-      <div className=" px-4">
+      <div className="mt-4 px-4">
         <Tabs defaultValue="info">
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="info">Thông tin</TabsTrigger>

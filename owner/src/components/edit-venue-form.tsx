@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react"
+import { Loader2, X } from "lucide-react"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -13,89 +13,134 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import type { Venue } from "@/types/venue";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useUpdateVenueMutation } from "@/queries/useVenue";
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import type { Venue, VenueImg } from "@/types/venue"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { useUpdateVenueMutation, useVenueImg } from "@/queries/useVenue"
+import UploadPage from "@/app/venue/venue_img/page"
+import { deleteVenueImgById } from "@/lib/api"
+import { BankSelector } from "./bank-selector"
+import { getLatLngByName } from "@/utils/geocode"
+
 
 interface EditVenueFormProps {
-  venue: Venue;
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (venue: Venue) => void;
+  venue: Venue
+  venueImgs: VenueImg[]
+  isOpen: boolean
+  onClose: () => void
+  onSave: (venue: Venue) => void
 }
 
-export function EditVenueForm({
-  venue,
-  isOpen,
-  onClose,
-  onSave,
-}: EditVenueFormProps) {
-  const [formData, setFormData] = useState<Venue>({ ...venue });
-  const [errors, setErrors] = useState<Record<string, string>>({});
+export function EditVenueForm({ venue, isOpen, onClose, venueImgs, onSave }: EditVenueFormProps) {
+  const [formData, setFormData] = useState<Venue>({ ...venue })
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [originalFormData] = useState<Venue>({ ...venue });
-  const updateVenueMutation = useUpdateVenueMutation();
+  const updateVenueMutation = useUpdateVenueMutation()
+  const [venueImages, setVenueImages] = useState<VenueImg[]>([]);
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value } = e.target
+    setFormData((prev) => ({ ...prev, [name]: value }))
 
     if (errors[name]) {
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
     }
-  };
+  }
+
+  const handleBankChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, bank_name: value }))
+
+    if (errors.bank_name) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors.bank_name
+        return newErrors
+      })
+    }
+  }
+
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }))
 
     if (errors[name]) {
       setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[name];
-        return newErrors;
-      });
+        const newErrors = { ...prev }
+        delete newErrors[name]
+        return newErrors
+      })
     }
-  };
+  }
 
   const validateForm = () => {
-    const newErrors: Record<string, string> = {};
+    const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = "Venue name is required";
+      newErrors.name = "Venue name is required"
     }
 
     if (!formData.bank_account_number.trim()) {
-      newErrors.bank_account_number = "Bank account number is required";
+      newErrors.bank_account_number = "Bank account number is required"
     }
 
     if (!formData.bank_name.trim()) {
-      newErrors.bank_name = "Bank name is required";
+      newErrors.bank_name = "Bank name is required"
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+    useEffect(() => {
+      const fetchLatLng = async () => {
+        if (!formData.address?.trim()) return
+    
+        try {
+          const [lat, lng] = await getLatLngByName(formData.address)
+          setFormData((prev) => ({
+            ...prev,
+            latitude: lat.toString(),
+            longitude: lng.toString(),
+          }))
+        } catch (error) {
+          console.error("Failed to fetch lat/lng from address", error)
+        }
+      }
+    
+      fetchLatLng()
+    }, [formData.address])
+  
+
+  const handleDelete = () => {
+    const imagesToDelete = venueImages.filter((img) => img.markedForDeletion);
+    imagesToDelete.forEach((img) => {
+      deleteVenueImgById(img.image_id);
+    });
+  };
+
+  const handleMarkDeleteExistingImage = (imageId: string) => {
+    // Đánh dấu ID đã bị xóa mềm
+    setDeletedImageIds((prev) => [...prev, imageId]);
+
+    // Ẩn luôn ảnh khỏi giao diện
+    setVenueImages((prev) => prev.filter((img) => img.image_id !== imageId));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!validateForm()) {
-      return;
+      return
     }
-    onSave(formData);
-  };
+    onSave(formData)
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -166,13 +211,7 @@ export function EditVenueForm({
                 Bank Name
               </Label>
               <div className="col-span-3">
-                <Input
-                  id="bank_name"
-                  name="bank_name"
-                  value={formData.bank_name}
-                  onChange={handleChange}
-                  className={errors.bank_name ? "border-destructive" : ""}
-                />
+                <BankSelector value={formData.bank_name} onChange={handleBankChange} error={errors.bank_name} />
                 {errors.bank_name && (
                   <p className="text-sm text-destructive mt-1">
                     {errors.bank_name}
@@ -203,45 +242,87 @@ export function EditVenueForm({
               </div>
             </div>
 
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="opening" className="text-right">
-                Opening Time
+            <div className="grid grid-cols-4 items-center gap-4 hidden">
+              <Label htmlFor="longitude" className="text-right">
+                Longitude
               </Label>
               <div className="col-span-3">
                 <Input
-                  id="opening"
-                  name="opening"
-                  type="time"
-                  value={formData.opening}
+                  id="longitude"
+                  name="longitude"
+                  value={formData.longitude}
                   onChange={handleChange}
-                  className={errors.opening ? "border-destructive" : ""}
+                  className={errors.longitude ? "border-destructive" : ""}
                 />
-                {errors.opening && <p className="text-sm text-destructive mt-1">{errors.opening}</p>}
+                {errors.longitude && <p className="text-sm text-destructive mt-1">{errors.longitude}</p>}
               </div>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4 hidden">
               <Label htmlFor="closing" className="text-right">
-                Closing Time
+                Latitude:
               </Label>
               <div className="col-span-3">
                 <Input
-                  id="closing"
-                  name="closing"
-                  type="time"
-                  value={formData.closing}
+                  id="latitude"
+                  name="latitude"
+                  value={formData.latitude}
                   onChange={handleChange}
-                  className={errors.closing ? "border-destructive" : ""}
+                  className={errors.latitude ? "border-destructive" : ""}
                 />
-                {errors.closing && <p className="text-sm text-destructive mt-1">{errors.closing}</p>}
+                {errors.latitude && <p className="text-sm text-destructive mt-1">{errors.latitude}</p>}
               </div>
-            </div> */}
+            </div>
+
+            <div className="grid grid-cols-1 items-center gap-4">
+              <Label htmlFor="closing" className="text-right">
+                Image:
+              </Label>
+              {/* Existing Images Preview */}
+              {venueImgs.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-medium mb-2">Existing Images</h3>
+                  <div className="grid grid-cols-1 gap-2">
+                    {venueImgs.map((image) => (
+                      <div key={image.image_id} className="relative h-32 border rounded-md overflow-hidden">
+                        <img
+                          src={image.image_url || "/placeholder.svg"}
+                          alt="Venue preview"
+                          className="object-cover w-full h-full"
+                        />
+                        <div className="absolute top-1 left-1 bg-black/70 text-white px-2 py-0.5 text-xs rounded">
+                          {image.type}
+                        </div>
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="sm"
+                          className="absolute top-1 right-1 h-6 w-6 p-0"
+                          onClick={() => handleMarkDeleteExistingImage(image.image_id)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+
+              <div className="col-span-3">
+                <UploadPage />
+                {errors.latitude && <p className="text-sm text-destructive mt-1">{errors.latitude}</p>}
+              </div>
+            </div>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={() => {
+              setFormData({ ...originalFormData });
+              onClose();
+            }}>
               Cancel
             </Button>
-            <Button type="submit" disabled={updateVenueMutation.isPending}>
+            <Button type="submit" onClick={handleDelete} disabled={updateVenueMutation.isPending}>
               {updateVenueMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

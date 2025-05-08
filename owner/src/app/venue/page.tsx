@@ -13,7 +13,7 @@ export default async function DashboardPage({
 
   const cookieStore = cookies()
   const accessToken = cookieStore.get("accessToken")?.value
-
+  console.log({"cookie": accessToken})
   if (!accessToken) {
     redirect("/login")
   }

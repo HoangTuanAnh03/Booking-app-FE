@@ -1,5 +1,6 @@
 export interface Venue {
     venue_id: string;
+    // owner_id: string;
     name: string;
     address?: string;
     status?: string;
@@ -8,4 +9,11 @@ export interface Venue {
     phone_number: string;
     longitude:string,
     latitude: string,
+};
+export interface VenueImg {
+    image_id: string,
+    venue_id: string,
+    image_url: string,
+    type: string,
+    markedForDeletion?: boolean;
 };

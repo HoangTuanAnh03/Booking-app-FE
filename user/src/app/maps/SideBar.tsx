@@ -33,7 +33,7 @@ export default function Sidebar() {
       const matchesQuery =
         !searchQuery ||
         venue.venue_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        venue.address.toLowerCase().includes(searchQuery.toLowerCase());
+        venue.venue_address.toLowerCase().includes(searchQuery.toLowerCase());
 
       const matchesType =
         !typeSportIdFilter ||

@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,8 +16,12 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import type { Venue } from "@/types/venue"
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useCreateVenueMutation } from "@/queries/useVenue"
+import UploadPage from "@/app/venue/venue_img/page"
+import { BankSelector } from "@/components/bank-selector"
+import { getLatLngByName } from "@/utils/geocode"
 
 interface AddVenueFormProps {
   isOpen: boolean
@@ -40,6 +44,25 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
     latitude: "",
   })
 
+  useEffect(() => {
+    const fetchLatLng = async () => {
+      if (!formData.address?.trim()) return
+  
+      try {
+        const [lat, lng] = await getLatLngByName(formData.address)
+        setFormData((prev) => ({
+          ...prev,
+          latitude: lat.toString(),
+          longitude: lng.toString(),
+        }))
+      } catch (error) {
+        console.error("Failed to fetch lat/lng from address", error)
+      }
+    }
+  
+    fetchLatLng()
+  }, [formData.address])
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
@@ -60,6 +83,18 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
       setErrors((prev) => {
         const newErrors = { ...prev }
         delete newErrors[name]
+        return newErrors
+      })
+    }
+  }
+
+  const handleBankChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, bank_name: value }))
+
+    if (errors.bank_name) {
+      setErrors((prev) => {
+        const newErrors = { ...prev }
+        delete newErrors.bank_name
         return newErrors
       })
     }
@@ -148,7 +183,7 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
               </div>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4 hidden">
               <Label htmlFor="status" className="text-right">
                 Status
               </Label>
@@ -173,13 +208,7 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
                 Bank Name
               </Label>
               <div className="col-span-3">
-                <Input
-                  id="bank_name"
-                  name="bank_name"
-                  value={formData.bank_name}
-                  onChange={handleChange}
-                  className={errors.bank_name ? "border-destructive" : ""}
-                />
+                <BankSelector value={formData.bank_name} onChange={handleBankChange} error={errors.bank_name} />
                 {errors.bank_name && <p className="text-sm text-destructive mt-1">{errors.bank_name}</p>}
               </div>
             </div>
@@ -218,7 +247,7 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
               </div>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4 hidden">
               <Label htmlFor="longitude" className="text-right">
                 Longitude
               </Label>
@@ -234,7 +263,7 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
               </div>
             </div>
 
-            <div className="grid grid-cols-4 items-center gap-4">
+            <div className="grid grid-cols-4 items-center gap-4 hidden">
               <Label htmlFor="closing" className="text-right">
                 Latitude:
               </Label>
@@ -246,6 +275,16 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
                   onChange={handleChange}
                   className={errors.latitude ? "border-destructive" : ""}
                 />
+                {errors.latitude && <p className="text-sm text-destructive mt-1">{errors.latitude}</p>}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="closing" className="text-right">
+                Image:
+              </Label>
+              <div className="col-span-3">
+                <UploadPage />
                 {errors.latitude && <p className="text-sm text-destructive mt-1">{errors.latitude}</p>}
               </div>
             </div>

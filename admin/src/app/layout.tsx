@@ -1,8 +1,11 @@
+import type React from "react"
+import "@/app/globals.css"
+import { DashboardLayout } from "@/components/dashboard-layout"
+import { Toaster } from "@/components/ui/toaster"
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 import AppProvider from "@/components/app-provider";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 // import AppSidebar from "@/components/app_sidebar";

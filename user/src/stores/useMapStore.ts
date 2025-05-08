@@ -30,7 +30,7 @@ export const useMapStore = create<MapStoreState>((set, get) => ({
             name: venue.venue_name,
             lat: parseFloat(venue.latitude),
             lng: parseFloat(venue.longitude),
-            address: venue.address,
+            address: venue.venue_address,
             type:
               venue.sport_types.length > 1
                 ? "multiple"
