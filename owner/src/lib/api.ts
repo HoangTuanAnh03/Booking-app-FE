@@ -1,4 +1,4 @@
-import type { Venue, VenueImg } from "@/types/venue"
+import {Venue, VenueImg, VenuePayment} from "@/types/venue"
 import { getAccessTokenFormLocalStorage } from "./utils";
 import { Booking, BookingStatsResponse } from "@/types/booking";
 import { Field } from "@/types/field";
@@ -45,6 +45,44 @@ export async function fetchVenues(): Promise<Venue[]> {
   }
 }
 
+export async function fetchUnpaidVenues(): Promise<Venue[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/venuePayment`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    })
+
+    const data = await handleResponse(response)
+
+    return Array.isArray(data.data) ? data.data : data
+  } catch (error) {
+    console.error("Error fetching venues:", error)
+    throw error
+  }
+}
+
+export async function fetchMakePaymentLink(venueId: string, returnUrl: string): Promise<VenuePayment> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/venuePayment/${venueId}?return_url=${returnUrl}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    })
+
+    const data = await handleResponse(response)
+    return data.data
+  } catch (error) {
+    console.error("Error fetching venues:", error)
+    throw error
+  }
+}
 // Function to fetch a single venue by ID
 export async function fetchVenueById(id: string): Promise<Venue> {
   try {
