@@ -4,6 +4,7 @@ import { useGetVenueDetail } from "@/queries/useVenue";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { useSideBarStore } from "@/stores/useSideBarStore";
+import { formatTimeToHHMM } from "@/lib/utils";
 
 export const InfoDetailVenue = () => {
   const [detailVenue, setDetailVenue] = useState<Venue>();
@@ -33,7 +34,9 @@ export const InfoDetailVenue = () => {
           <Skeleton className="h-6 w-[350px]" />
         ) : (
           <p>
-            Giờ hoạt động: {detailVenue?.opening} - {detailVenue?.closing}
+            Giờ hoạt động:{" "}
+            {formatTimeToHHMM(detailVenue?.opening ?? "00:00:00")} -{" "}
+            {formatTimeToHHMM(detailVenue?.closing ?? "00:00:00")}
           </p>
         )}
       </div>

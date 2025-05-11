@@ -1,8 +1,9 @@
-import type { Venue, VenueImg } from "@/types/venue"
+import {Venue, VenueImg, VenuePayment} from "@/types/venue"
 import { getAccessTokenFormLocalStorage } from "./utils";
 import { Booking, BookingStatsResponse } from "@/types/booking";
 import { Field } from "@/types/field";
-import { BookingRequest } from "@/types/court";
+import { BookingRequest, ScheduleRequest } from "@/types/court";
+
 
 const token = getAccessTokenFormLocalStorage();
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:8000/api"
@@ -44,6 +45,44 @@ export async function fetchVenues(): Promise<Venue[]> {
   }
 }
 
+export async function fetchUnpaidVenues(): Promise<Venue[]> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/venuePayment`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    })
+
+    const data = await handleResponse(response)
+
+    return Array.isArray(data.data) ? data.data : data
+  } catch (error) {
+    console.error("Error fetching venues:", error)
+    throw error
+  }
+}
+
+export async function fetchMakePaymentLink(venueId: string, returnUrl: string): Promise<VenuePayment> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/venuePayment/${venueId}?return_url=${returnUrl}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`
+      },
+    })
+
+    const data = await handleResponse(response)
+    return data.data
+  } catch (error) {
+    console.error("Error fetching venues:", error)
+    throw error
+  }
+}
 // Function to fetch a single venue by ID
 export async function fetchVenueById(id: string): Promise<Venue> {
   try {
@@ -155,7 +194,10 @@ export async function fetchVenueImgById(id: string): Promise<VenueImg[]> {
 }
 
 // Function to add venues Image by id
-export async function addVenueImgById(id: string, images: string[]): Promise<VenueImg[]> {
+export async function addVenueImgById(
+  id: string,
+  payload: { image_url: string; type: string }
+): Promise<VenueImg[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/venue-images/${id}`, {
       method: "POST",
@@ -164,14 +206,16 @@ export async function addVenueImgById(id: string, images: string[]): Promise<Ven
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
-    })
-    const data = await handleResponse(res)
-    return data.data || data
+      body: JSON.stringify(payload),
+    });
+    const data = await handleResponse(res);
+    return data.data || data;
   } catch (error) {
-    console.error(`Error add venue image ${id}:`, error)
-    throw error
+    console.error(`Error add venue image ${id}:`, error);
+    throw error;
   }
 }
+
 
 // Function to delete venues Image by id
 export async function deleteVenueImgById(id: string): Promise<VenueImg[]> {
@@ -193,15 +237,16 @@ export async function deleteVenueImgById(id: string): Promise<VenueImg[]> {
 }
 
 // Function to update venues Image by id
-export async function updateVenueImgById(id: string): Promise<VenueImg[]> {
+export async function updateVenueImgById(id: string, image_url: string): Promise<VenueImg[]> {
   try {
     const res = await fetch(`${API_BASE_URL}/venue-images/${id}`, {
-      method: "DELETE",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
         Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(image_url),
     })
     const data = await handleResponse(res)
     return data.data || data
@@ -210,6 +255,8 @@ export async function updateVenueImgById(id: string): Promise<VenueImg[]> {
     throw error
   }
 }
+
+
 interface FetchBookingsParams {
   page?: number
   status?: string | null
@@ -346,26 +393,6 @@ export async function fetchFieldsByVenueId(id: string): Promise<Field[]> {
   }
 }
 
-// export async function lockedSlots(field_id: string, time_slots: string): Promise<BookingRequest> {
-//   try {
-//     const response = await fetch(`${API_BASE_URL}/bookings/locked-slots`, {
-//       method: "GET",
-//       headers: {
-//         "Content-Type": "application/json",
-//         Accept: "application/json",
-//         Authorization: `Bearer ${token}`,
-//       },
-//     })
-
-//     const data = await handleResponse(response)
-
-//     return data.data || data
-//   } catch (error) {
-//     console.error("Error fetching locked slots:", error)
-//     throw error
-//   }
-// }
-
 //API function to lock slots
 export async function lockedSlots(request: BookingRequest): Promise<any> {
   const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT
@@ -373,6 +400,34 @@ export async function lockedSlots(request: BookingRequest): Promise<any> {
 
   try {
     const response = await fetch(`${API_BASE_URL}/bookings/lock`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(request),
+    })
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error("Error locking slots:", error)
+    throw error
+  }
+}
+
+
+export async function mergeTimeSlot(request: ScheduleRequest): Promise<any> {
+  const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT
+  const token = getAccessTokenFormLocalStorage();
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/court/createSpecialTimes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

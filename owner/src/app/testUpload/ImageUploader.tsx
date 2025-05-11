@@ -6,8 +6,11 @@ import Image from "next/image";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+type ImageUploaderProps = {
+    onUpload?: (urls: string[]) => void;
+};
 
-export const ImageUploader = () => {
+export const ImageUploader = ({ onUpload }: ImageUploaderProps) => {
     const [images, setImages] = useState<string[]>([]);
     const [loading, setLoading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -19,7 +22,11 @@ export const ImageUploader = () => {
         setLoading(true);
         try {
             const uploadedUrl = await uploadToImgur(file);
+            const updatedImages = [...images, uploadedUrl];
             setImages((prev) => [...prev, uploadedUrl]);
+            if (onUpload) {
+                onUpload(updatedImages); // Truyền danh sách ảnh mới ra ngoài
+            }
         } catch (err) {
             alert("Lỗi khi upload ảnh");
             console.error(err);

@@ -1,7 +1,17 @@
 "use client"
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { deleteVenue, fetchVenues, fetchVenueById, updateVenue, createVenue, fetchVenueImgById, deleteVenueImgById, fetchFieldsByVenueId } from "@/lib/api"
+import {
+  deleteVenue,
+  fetchVenues,
+  fetchVenueById,
+  updateVenue,
+  createVenue,
+  fetchVenueImgById,
+  deleteVenueImgById,
+  fetchFieldsByVenueId,
+  fetchUnpaidVenues, fetchMakePaymentLink
+} from "@/lib/api"
 import type { Venue, VenueImg } from "@/types/venue"
 import { toast } from "@/components/ui/use-toast"
 import { useRouter } from "next/navigation"
@@ -10,6 +20,7 @@ import { Field } from '@/types/field';
 // Query key for venues
 export const venuesKeys = {
   all: ["venues"] as const,
+  unpaid: ["unpaid"] as const,
   details: (id: string) => [...venuesKeys.all, id] as const,
 }
 
@@ -18,6 +29,21 @@ export const useVenues = () => {
   return useQuery({
     queryKey: venuesKeys.all,
     queryFn: fetchVenues,
+  })
+}
+
+export const useUnpaidVenues = () => {
+  return useQuery({
+    queryKey: venuesKeys.unpaid,
+    queryFn: fetchUnpaidVenues,
+  })
+}
+
+export const useMakePaymentURL = (venueId: string, returnUrl: string) => {
+  return useQuery({
+    queryKey: [venueId, returnUrl],
+    queryFn: () => fetchMakePaymentLink(venueId, returnUrl),
+    enabled: !!venueId && !!returnUrl,
   })
 }
 
@@ -134,33 +160,3 @@ export const useDeleteVenueMutation = () => {
     },
   })
 }
-
-export const useDeleteVenueImgMutation = () => {
-  const queryClient = useQueryClient()
-  const router = useRouter()
-
-  return useMutation({
-    mutationFn: (id: string) => deleteVenueImgById(id),
-    onSuccess: () => {
-      // Invalidate venues list to trigger refetch
-      queryClient.invalidateQueries({ queryKey: venuesKeys.all })
-
-      toast({
-        title: "Success",
-        description: "Venue deleted successfully",
-      })
-
-      // Navigate back to dashboard
-      router.push("/venue")
-    },
-    onError: (error) => {
-      console.error("Failed to delete venue:", error)
-      toast({
-        title: "Error",
-        description: "Failed to delete venue. Please try again.",
-        variant: "destructive",
-      })
-    },
-  })
-}
-

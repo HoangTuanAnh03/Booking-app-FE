@@ -16,3 +16,11 @@ export const useGetVenueDetail = (id: string) => {
     staleTime: 10 * 1000,
   });
 };
+
+export const useGetVenueNearHome = (lat?: number, lng?: number) => {
+  return useQuery({
+    queryKey: ["getVenueNearHome", lat, lng],
+    queryFn: () => venueApiRequest.sGetVenueNearHome(lat, lng),
+    staleTime: 10 * 1000,
+  });
+};

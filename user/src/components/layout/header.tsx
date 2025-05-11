@@ -11,7 +11,7 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
+import { cn, getAccessTokenFormLocalStorage } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -25,9 +25,11 @@ export default function Header() {
   const isAuth = useAppStore((state) => state.isAuth);
   console.log("🚀 ~ Header ~ isAuth:", isAuth);
 
+  const accessToken = getAccessTokenFormLocalStorage();
+
   useEffect(() => {
     setHydrated(true);
-  }, [isAuth]);
+  }, []);
 
   const routes = [
     {
@@ -84,9 +86,9 @@ export default function Header() {
             </NavigationMenuList>
           </NavigationMenu>
         </nav>
-        <div className="min-w-10 flex items-center space-x-2">
+        <div className="w-[250px] h-[40px] flex items-center justify-end space-x-2">
           {hydrated &&
-            (isAuth ? (
+            (accessToken ? (
               <AvatarOption />
             ) : (
               <>

@@ -279,7 +279,7 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
               </div>
             </div>
             
-            <div className="grid grid-cols-4 items-center gap-4">
+            {/* <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="closing" className="text-right">
                 Image:
               </Label>
@@ -287,7 +287,7 @@ export function AddVenueForm({ isOpen, onClose, onSuccess }: AddVenueFormProps) 
                 <UploadPage />
                 {errors.latitude && <p className="text-sm text-destructive mt-1">{errors.latitude}</p>}
               </div>
-            </div>
+            </div> */}
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>

@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export function AvatarOption() {
@@ -17,10 +17,7 @@ export function AvatarOption() {
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Avatar className="select-none">
-            <AvatarImage
-              src="https://lh3.googleusercontent.com/a/ACg8ocKBsFoMIeesNbbl-3lYdnbkOF6Kc7-oX7LE-LyduNwjxnv3_Cqk=s96-c"
-              alt="@shadcn"
-            />
+            <AvatarImage src="/default_avatar.png" alt="@shadcn" />
             <AvatarFallback>CN</AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
@@ -29,10 +26,10 @@ export function AvatarOption() {
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              Profile
+              Booking
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            {/* <DropdownMenuItem>
               Billing
               <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
             </DropdownMenuItem>
@@ -43,7 +40,7 @@ export function AvatarOption() {
             <DropdownMenuItem>
               Keyboard shortcuts
               <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            </DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem>

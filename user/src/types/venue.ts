@@ -20,6 +20,24 @@ type Venue = {
   status: string;
 };
 
+type VenueDetail = {
+  venue_id: string;
+  venue_name: string;
+  venue_address: string;
+  status: string;
+  phone_number: string;
+  opening: string;
+  closing: string;
+  images: {
+    thumbnail: string;
+    cover: string;
+    default: string[];
+  };
+  latitude: string;
+  longitude: string;
+  distance: number;
+};
+
 type CoordinateVenue = {
   id: string;
   name: string;

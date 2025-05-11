@@ -1,6 +1,6 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+import {usePathname, useSearchParams} from "next/navigation"
 import { useEffect, useState } from "react"
 import {
   Breadcrumb,
@@ -19,6 +19,9 @@ export function DashboardHeader() {
   const searchParams = useSearchParams()
   const venueId = searchParams.get("venueId")
   const [venue, setVenue] = useState<Venue | null>(null)
+  const pathname = usePathname()
+
+  const isVenuePaymentPage = pathname === '/venuePayment'
 
   useEffect(() => {
     if (venueId) {
@@ -48,6 +51,16 @@ export function DashboardHeader() {
           </BreadcrumbItem>
           {venue && (
             <>
+              {
+                isVenuePaymentPage && (
+                    <>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage>Venue Payment</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </>
+                  )
+              }
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbPage>{venue.name}</BreadcrumbPage>

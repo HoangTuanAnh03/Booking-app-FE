@@ -42,7 +42,7 @@ export default function SearchBar() {
         />
       </div>
 
-      <Select value={sportType} onValueChange={setSportType}>
+      {/* <Select value={sportType} onValueChange={setSportType}>
         <SelectTrigger className="w-full md:w-[180px]">
           <SelectValue placeholder="Loại bản đồ" />
         </SelectTrigger>
@@ -57,7 +57,7 @@ export default function SearchBar() {
 
       <Button type="submit" className="md:w-[120px]">
         Tìm kiếm
-      </Button>
+      </Button> */}
     </form>
   );
 }

@@ -17,3 +17,12 @@ export interface VenueImg {
     type: string,
     markedForDeletion?: boolean;
 };
+
+export interface VenuePayment {
+    original: OriginalPayment
+}
+
+interface OriginalPayment {
+    checkoutUrl: string;
+    orderCode: string;
+}

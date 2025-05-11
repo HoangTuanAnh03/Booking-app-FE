@@ -9,15 +9,19 @@ import { ReviewVenue } from "@/components/ui/venue/detail/Review";
 import FieldModal from "@/components/FieldModal";
 import { Field } from "@/types/field";
 import { useGetFieldByVenueId } from "@/queries/useField";
+import { getAccessTokenFormLocalStorage } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 export const DetailVenue = () => {
-  const [detailVenue, setDetailVenue] = useState<Venue>();
+  const [detailVenue, setDetailVenue] = useState<VenueDetail>();
   const venueIdSelected = useSideBarStore((state) => state.venueIdSelected);
   const [fieldData, setFieldData] = useState<Field[]>([]);
   const [isFieldModalOpen, setIsFieldModalOpen] = useState(false);
 
   const { data } = useGetVenueDetail(venueIdSelected ?? "");
   const { data: fields } = useGetFieldByVenueId(venueIdSelected ?? "");
+  const accessToken = getAccessTokenFormLocalStorage();
+  const router = useRouter();
 
   useEffect(() => {
     if (data?.payload.data) {
@@ -57,8 +61,6 @@ export const DetailVenue = () => {
 
   const showField = () => {
     if (!detailVenue) return "";
-    const venueId = detailVenue.venue_id;
-    // const { data } = useGetFieldByVenueId(venueId);
     if (fields?.payload.data) {
       setFieldData(fields?.payload.data.data);
       setIsFieldModalOpen(true);
@@ -71,7 +73,7 @@ export const DetailVenue = () => {
       <div className="relative">
         <div className="h-48 w-full bg-gradient-to-t from-black/20 to-transparent">
           <Image
-            src={detailVenue?.image_cover || "/logo.png"}
+            src={detailVenue?.images.cover || "/placeholder.png"}
             alt={detailVenue?.venue_name ?? "Venue Image"}
             fill
             className="object-cover"
@@ -81,7 +83,7 @@ export const DetailVenue = () => {
         <div className="absolute -bottom-[68px] left-4">
           <div className="h-28 w-28 rounded-full border-4 border-white bg-white overflow-hidden">
             <Image
-              src={detailVenue?.thumbnail || "/default_avatar.png"}
+              src={detailVenue?.images.thumbnail || "/default_avatar.png"}
               alt={detailVenue?.venue_name ?? "Venue Image"}
               width={112}
               height={112}
@@ -121,7 +123,13 @@ export const DetailVenue = () => {
                 ? "bg-gray-500 cursor-not-allowed"
                 : "bg-orange-500 hover:bg-orange-600"
             }`}
-            onClick={detailVenue?.status === "active" ? showField : undefined}
+            onClick={() => {
+              if (accessToken) {
+                showField();
+              } else {
+                router.push("/login");
+              }
+            }}
             disabled={detailVenue?.status !== "active"}
           >
             {detailVenue?.status !== "active"
@@ -159,25 +167,27 @@ export const DetailVenue = () => {
             </div>
           </TabsContent>
 
-          {/* <TabsContent value="photos">
+          <TabsContent value="photos">
             <div className="grid grid-cols-2 gap-2">
-              {selectedVenue.images.map(
-                (image: string, index: number) => (
-                  <div
-                    key={index}
-                    className="relative h-32 rounded overflow-hidden"
-                  >
-                    <Image
-                      src={image || "/placeholder.svg"}
-                      alt={`${selectedVenue.name} ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )
+              {detailVenue?.images.default.map(
+                (image: string, index: number) => {
+                  return (
+                    <div
+                      key={index}
+                      className="relative h-32 rounded overflow-hidden"
+                    >
+                      <Image
+                        src={image || "/placeholder.png"}
+                        alt={`${detailVenue?.venue_name} ${index + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  );
+                }
               )}
             </div>
-          </TabsContent> */}
+          </TabsContent>
         </Tabs>
       </div>
     </>

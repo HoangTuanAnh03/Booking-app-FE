@@ -105,3 +105,8 @@ export const removeTokenFormLocalStorage = () => {
     localStorage.removeItem("accessToken");
   }
 };
+
+export const formatTimeToHHMM = (time: string) => {
+  if (!time) return "";
+  return time.slice(0, 5); // Takes only HH:mm part
+};
