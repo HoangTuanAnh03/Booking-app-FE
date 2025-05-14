@@ -28,17 +28,6 @@ function formatDateToYMD(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
-interface BookingProps {
-  fieldId: string
-  date: string
-  onSelectionChange?: (data: {
-    selectedTimeslots: Map<string, { start_time: string; end_time: string }[]>
-    totalPrice: number
-  }) => void
-  resetSignal?: number
-  onLockSuccess?: (courtSlot: string, slots: { start_time: string; end_time: string }[]) => void
-}
-
 export function VenueDetails({ venueId }: { venueId: string }) {
   const [showEditModal, setShowEditModal] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -62,21 +51,22 @@ export function VenueDetails({ venueId }: { venueId: string }) {
     >
   >(new Map())
   const [totalPrice, setTotalPrice] = useState<number>(0)
-
   const { data: venue, isLoading, error } = useVenue(venueId)
   const { data: venueImg, isLoading: isVenueImgLoading } = useVenueImg(venueId)
   const { data: field, isLoading: isFieldLoading } = useField(venueId)
   const [lockedCourtSlots, setLockedCourtSlots] = useState<Set<string>>(new Set())
-
   const [mergedCourtSlots, setMergedCourtSlots] = useState<Set<string>>(new Set())
-
-
 
   const handleSelectionChange = (data: {
     selectedTimeslots: Map<string, { start_time: string; end_time: string }[]>
     totalPrice: number
   }) => {
-    setSelectedTimeslots(data.selectedTimeslots)
+    const cleanedSelectedTimeslots = new Map(
+      Array.from(data.selectedTimeslots.entries()).filter(
+        ([_, timeslots]) => timeslots.length > 0
+      )
+    )
+    setSelectedTimeslots(cleanedSelectedTimeslots)
     setTotalPrice(data.totalPrice)
   }
 
@@ -197,9 +187,6 @@ export function VenueDetails({ venueId }: { venueId: string }) {
       setIsMergingSlots(false);
     }
   };
-
-
-
 
   //Function to lock all selected slots for a field
   const handleLockAllSlots = async (fieldId: string) => {
@@ -466,7 +453,7 @@ export function VenueDetails({ venueId }: { venueId: string }) {
                               </Button>
 
                               {showBookingFieldDetails[fieldItem.field_id] && (
-                                <div className="mt-4 h-[calc(100vh-550px)] relative w-full overflow-x-hidden bg-gray-50 rounded-xl shadow-inner">
+                                <div className="mt-4 h-[calc(100vh-400px)] relative w-full overflow-x-hidden bg-gray-50 rounded-xl shadow-inner">
                                   {/* Date Picker Floating Box */}
                                   <div className="absolute top-6 left-6 bg-white p-4 rounded-xl shadow-lg border border-gray-200">
                                     <DatePicker
@@ -494,66 +481,66 @@ export function VenueDetails({ venueId }: { venueId: string }) {
                                     {/* Single Lock Button for all selected slots */}
                                     {Array.from(selectedTimeslots.keys()).length > 0 && (
                                       <div className="flex gap-2">
-                                      <div className="mt-4">
-                                        <Button
-                                          className="bg-red-600 text-white hover:bg-red-700"
-                                          onClick={() => handleLockAllSlots(fieldItem.field_id)}
-                                          disabled={isLockingSlots || selectedTimeslots.size == 0}
-                                        >
-                                          <span className="flex items-center justify-center">
-                                            <Lock className="mr-2 h-4 w-4" />
-                                            Lock Selected Slots
-                                          </span>
-                                        </Button>
-                                      </div>
-                                      <div className="mt-4">
-                                        <Button
-                                          className="bg-blue-600 text-white hover:bg-blue-700"
-                                          onClick={handleMergeSlots}
-                                          disabled={isLockingSlots || selectedTimeslots.size == 0}
-                                        >
-                                          <span className="flex items-center justify-center">
-                                            < Merge className="mr-2 h-4 w-4" />
-                                            Merge Selected Slots
-                                          </span>
-                                        </Button>
-                                      </div>
+                                        <div className="mt-4">
+                                          <Button
+                                            className="bg-red-600 text-white hover:bg-red-700"
+                                            onClick={() => handleLockAllSlots(fieldItem.field_id)}
+                                            disabled={isLockingSlots}
+                                          >
+                                            <span className="flex items-center justify-center">
+                                              <Lock className="mr-2 h-4 w-4" />
+                                              Lock Selected Slots
+                                            </span>
+                                          </Button>
+                                        </div>
+                                        <div className="mt-4">
+                                          <Button
+                                            className="bg-blue-600 text-white hover:bg-blue-700"
+                                            onClick={handleMergeSlots}
+                                            disabled={isLockingSlots || selectedTimeslots.size == 0}
+                                          >
+                                            <span className="flex items-center justify-center">
+                                              < Merge className="mr-2 h-4 w-4" />
+                                              Merge Selected Slots
+                                            </span>
+                                          </Button>
+                                        </div>
                                       </div>
                                     )}
+                                  </div>
                                 </div>
-                                </div>
-                          )}
+                              )}
+                            </div>
+                          ))}
                         </div>
-                      ))}
-                    </div>
-                    ) : (
-                    <p className="text-muted-foreground">No field information available</p>
+                      ) : (
+                        <p className="text-muted-foreground">No field information available</p>
                       )}
-                  </CardContent>
+                    </CardContent>
                   </Card>
                 )}
-            </div>
-          </CardContent>
-        </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
 
-      {/* Edit Venue Modal */ }
-  <EditVenueForm
-    venue={venue}
-    isOpen={showEditModal}
-    onClose={() => setShowEditModal(false)}
-    onSave={handleVenueUpdate}
-    venueImgs={venueImg ?? []}
-  />
+      {/* Edit Venue Modal */}
+      <EditVenueForm
+        venue={venue}
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        onSave={handleVenueUpdate}
+        venueImgs={venueImg ?? []}
+      />
 
-  {/* Delete Venue Dialog */ }
-  <DeleteVenueDialog
-    venueName={venue.name}
-    isOpen={showDeleteDialog}
-    onClose={() => setShowDeleteDialog(false)}
-    onDelete={handleVenueDelete}
-  />
+      {/* Delete Venue Dialog */}
+      <DeleteVenueDialog
+        venueName={venue.name}
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onDelete={handleVenueDelete}
+      />
     </div >
   )
 }

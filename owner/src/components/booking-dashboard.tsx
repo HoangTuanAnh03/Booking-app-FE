@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookingTable } from "@/components/booking-table"
 import { BookingStats } from "@/components/booking-stats"
-import { BookingFilter } from "@/components/booking-filter"
 import { Pagination } from "@/components/pagination"
 import { Loader2 } from "lucide-react"
 import type { BookingStatsResponse } from "@/types/booking"
@@ -63,11 +62,6 @@ export function BookingDashboard() {
     setCurrentPage(page)
   }
 
-  // const handleStatusFilterChange = (status: string | null) => {
-  //   setStatusFilter(status)
-  //   setCurrentPage(1) 
-  // }
-
   if (loading && !bookingData) {
     return (
       <div className="flex justify-center items-center min-h-[400px]">
@@ -80,14 +74,6 @@ export function BookingDashboard() {
   if (error) {
     return (
       <div className="space-y-6">
-        {/* <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Booking Management</h1>
-            <p className="text-muted-foreground">Manage and monitor all your court bookings in one place.</p>
-          </div>
-          <BookingFilter onFilterChange={handleStatusFilterChange} currentFilter={statusFilter} />
-        </div> */}
-
         <Card className="border-amber-200 bg-amber-50">
           <CardHeader className="pb-2">
             <CardTitle className="text-amber-600 flex items-center gap-2">
@@ -149,13 +135,12 @@ export function BookingDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 ml-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Booking Management</h1>
           <p className="text-muted-foreground">Manage and monitor all your court bookings in one place.</p>
         </div>
-        {/* <BookingFilter onFilterChange={handleStatusFilterChange} currentFilter={statusFilter} /> */}
       </div>
 
       {bookingData && (

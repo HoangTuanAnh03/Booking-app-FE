@@ -11,7 +11,7 @@ export function BookingStats({ totalCompletedPrice }: BookingStatsProps) {
     const price = Number.parseFloat(priceString.replace(/,/g, ""))
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "VND",
     }).format(price)
   }
 

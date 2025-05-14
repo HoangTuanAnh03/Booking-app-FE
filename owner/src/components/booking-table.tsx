@@ -9,6 +9,7 @@ import { Check, ChevronDown, ChevronUp, Eye } from "lucide-react"
 import type { Booking } from "@/types/booking"
 import { completeBookingById } from "@/lib/api"
 import { toast } from "@/components/ui/use-toast"
+import { useRouter } from "next/router"
 
 interface BookingTableProps {
   bookings: Booking[]

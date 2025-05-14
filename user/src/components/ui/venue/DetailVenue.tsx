@@ -73,6 +73,7 @@ export const DetailVenue = () => {
       <div className="relative">
         <div className="h-48 w-full bg-gradient-to-t from-black/20 to-transparent">
           <Image
+              loader={() => detailVenue?.images.cover || "/placeholder.png"}
             src={detailVenue?.images.cover || "/placeholder.png"}
             alt={detailVenue?.venue_name ?? "Venue Image"}
             fill
@@ -83,6 +84,7 @@ export const DetailVenue = () => {
         <div className="absolute -bottom-[68px] left-4">
           <div className="h-28 w-28 rounded-full border-4 border-white bg-white overflow-hidden">
             <Image
+                loader={() => detailVenue?.images.thumbnail || "/default_avatar.png"}
               src={detailVenue?.images.thumbnail || "/default_avatar.png"}
               alt={detailVenue?.venue_name ?? "Venue Image"}
               width={112}
@@ -177,6 +179,7 @@ export const DetailVenue = () => {
                       className="relative h-32 rounded overflow-hidden"
                     >
                       <Image
+                          loader={() => image || "/placeholder.png"}
                         src={image || "/placeholder.png"}
                         alt={`${detailVenue?.venue_name} ${index + 1}`}
                         fill
