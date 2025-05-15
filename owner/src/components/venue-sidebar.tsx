@@ -94,8 +94,8 @@ export function DashboardSidebar() {
           <Collapsible defaultOpen className="group/collapsible">
             <SidebarGroup>
               <SidebarMenu>
-                {/* Collapsible 1 */}
-                <Collapsible defaultOpen className="group/collapsible">
+                {/* Collapsible 0 */}
+                <Collapsible defaultOpen className="group/collapsible hidden">
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>
                       <SidebarMenuButton>
@@ -141,6 +141,15 @@ export function DashboardSidebar() {
                   </SidebarMenuItem>
                 </Collapsible>
 
+                {/* Collapsible 1 */}
+                <Collapsible className="group/collapsible">
+                  <SidebarMenuItem>
+                    <Link href="/venue">
+                      <SidebarMenuButton>Sân của bạn</SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                </Collapsible>
+
                 {/* Collapsible 2 */}
                 <Collapsible className="group/collapsible">
                   <SidebarMenuItem>
@@ -150,6 +159,7 @@ export function DashboardSidebar() {
                   </SidebarMenuItem>
                 </Collapsible>
 
+                {/* Collapsible 3 */}
                 <Collapsible defaultOpen className="group/collapsible">
                   <SidebarMenuItem>
                     <CollapsibleTrigger asChild>

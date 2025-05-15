@@ -7,17 +7,16 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Check, ChevronDown, ChevronUp, Eye } from "lucide-react"
 import type { Booking } from "@/types/booking"
-import { completeBookingById } from "@/lib/api"
+import { completeBookingById, fetchBookings } from "@/lib/api"
 import { toast } from "@/components/ui/use-toast"
-import { useRouter } from "next/router"
 
 interface BookingTableProps {
   bookings: Booking[]
+  onTotalPriceChange: (price: string) => void
 }
 
-export function BookingTable({ bookings: initialBookings }: BookingTableProps) {
+export function BookingTable({ bookings: initialBookings, onTotalPriceChange }: BookingTableProps) {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({})
-  // const [bookingStatus, setBookingStatus] = useState(bookings[0].status)
   const [bookings, setBookings] = useState<Booking[]>(initialBookings)
 
   const toggleRow = (bookingId: string) => {
@@ -77,6 +76,8 @@ export function BookingTable({ bookings: initialBookings }: BookingTableProps) {
       toast({
         title: "Update completed",
       })
+      const updatedData = await fetchBookings()
+      onTotalPriceChange(updatedData.data.total_completed_price)
     } catch (err) {
       console.error("Error completing booking:", err)
     }
@@ -175,8 +176,8 @@ export function BookingTable({ bookings: initialBookings }: BookingTableProps) {
                   </Dialog>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" size="icon"  disabled={disabledStatuses.includes(booking.status)}>
-                        
+                      <Button variant="outline" size="icon" disabled={disabledStatuses.includes(booking.status)}>
+
                         <Check className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>

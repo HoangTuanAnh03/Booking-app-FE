@@ -18,7 +18,7 @@ export default async function DashboardPage({
         redirect("/venue")
     }
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full mt-16">
             <DashboardHeader/>
             <CreatingPaymentLink venueId={venueId}/>
         </div>

@@ -126,10 +126,24 @@ export function VenueDetails({ venueId }: { venueId: string }) {
 
   //Function to merge selected slots
   const handleMergeSlots = async () => {
-    if (selectedTimeslots.size === 0) {
+    //Tính tổng số lượng timeslot mà người dùng đã chọn (số phần tử trong tất cả các mảng slots).
+    //acc là biến tích lũy, slots.length là số lượng timeslot trong mỗi sân
+    const totalSelectedSlots = Array.from(selectedTimeslots.values()).reduce((acc, slots) => acc + slots.length, 0); 
+
+    if (totalSelectedSlots < 2) {
       toast({
-        title: "No time slots selected",
-        description: "Please select at least one time slot to merge",
+        title: "Can't merge",
+        description: "Please select at least two time slots to merge.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const selectedCourtIds = Array.from(selectedTimeslots.keys());
+    if (selectedCourtIds.length > 1) {
+      toast({
+        title: "Can't merge",
+        description: "Please select time slots from only one court.",
         variant: "destructive",
       });
       return;
@@ -488,34 +502,32 @@ export function VenueDetails({ venueId }: { venueId: string }) {
                                     </div>
 
                                     {/* Single Lock Button for all selected slots */}
-                                    {Array.from(selectedTimeslots.keys()).length > 0 && (
-                                      <div className="flex gap-2">
-                                        <div className="mt-4">
-                                          <Button
-                                            className="bg-red-600 text-white hover:bg-red-700"
-                                            onClick={() => handleLockAllSlots(fieldItem.field_id)}
-                                            disabled={isLockingSlots}
-                                          >
-                                            <span className="flex items-center justify-center">
-                                              <Lock className="mr-2 h-4 w-4" />
-                                              Lock Selected Slots
-                                            </span>
-                                          </Button>
-                                        </div>
-                                        <div className="mt-4">
-                                          <Button
-                                            className="bg-blue-600 text-white hover:bg-blue-700"
-                                            onClick={handleMergeSlots}
-                                            disabled={isLockingSlots || selectedTimeslots.size == 0}
-                                          >
-                                            <span className="flex items-center justify-center">
-                                              < Merge className="mr-2 h-4 w-4" />
-                                              Merge Selected Slots
-                                            </span>
-                                          </Button>
-                                        </div>
+                                    <div className="flex gap-2">
+                                      <div className="mt-4">
+                                        <Button
+                                          className="bg-red-600 text-white hover:bg-red-700"
+                                          onClick={() => handleLockAllSlots(fieldItem.field_id)}
+                                          disabled={isLockingSlots || selectedTimeslots.size === 0}
+                                        >
+                                          <span className="flex items-center justify-center">
+                                            <Lock className="mr-2 h-4 w-4" />
+                                            Lock Selected Slots
+                                          </span>
+                                        </Button>
                                       </div>
-                                    )}
+                                      <div className="mt-4">
+                                        <Button
+                                          className="bg-blue-600 text-white hover:bg-blue-700"
+                                          onClick={handleMergeSlots}
+                                          disabled={isLockingSlots || selectedTimeslots.size === 0}
+                                        >
+                                          <span className="flex items-center justify-center">
+                                            < Merge className="mr-2 h-4 w-4" />
+                                            Merge Selected Slots
+                                          </span>
+                                        </Button>
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
                               )}

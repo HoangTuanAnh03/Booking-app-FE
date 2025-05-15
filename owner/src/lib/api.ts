@@ -395,9 +395,6 @@ export async function fetchFieldsByVenueId(id: string): Promise<Field[]> {
 
 //API function to lock slots
 export async function lockedSlots(request: BookingRequest): Promise<any> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT
-  const token = getAccessTokenFormLocalStorage();
-
   try {
     const response = await fetch(`${API_BASE_URL}/bookings/lock`, {
       method: "POST",
@@ -423,9 +420,6 @@ export async function lockedSlots(request: BookingRequest): Promise<any> {
 
 
 export async function mergeTimeSlot(request: ScheduleRequest): Promise<any> {
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_ENDPOINT
-  const token = getAccessTokenFormLocalStorage();
-
   try {
     const response = await fetch(`${API_BASE_URL}/court/createSpecialTimes`, {
       method: "POST",
