@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-import { ChevronLeft, ChevronRight, Edit, MapPin, Trash2, ChevronDown, ChevronUp, Lock, Merge } from "lucide-react"
+import { ChevronLeft, ChevronRight, Edit, MapPin, Trash2, ChevronDown, ChevronUp, Lock, Merge, List } from "lucide-react"
 
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
@@ -14,7 +14,7 @@ import { DeleteVenueDialog } from "./delete-venue-dialog"
 import { Badge } from "@/components/ui/badge"
 import { useVenue, useDeleteVenueMutation, useUpdateVenueMutation, useVenueImg, useField } from "@/queries/useVenue"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useSearchParams } from "next/navigation"
+import { useSearchParams, useRouter } from "next/navigation"
 import { Booking } from "./Booking"
 import { toast } from "@/components/ui/use-toast"
 
@@ -38,6 +38,7 @@ export function VenueDetails({ venueId }: { venueId: string }) {
   const [isMergingSlots, setIsMergingSlots] = useState(false)
 
   const searchParams = useSearchParams()
+  const router = useRouter()
   const urlFieldId = searchParams.get("fieldid")
   const [resetSignal, setResetSignal] = useState(0)
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -321,6 +322,14 @@ export function VenueDetails({ venueId }: { venueId: string }) {
                 )}
               </div>
               <div className="flex gap-2">
+                 <Button
+    variant="default"
+    size="sm"
+   onClick={() => router.push(`venue/fields?venueId=${venueId}`)}
+  >
+    <List className="h-4 w-4 mr-1" />
+    View Fields
+  </Button>
                 <Button
                   variant="outline"
                   size="sm"
