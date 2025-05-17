@@ -26,3 +26,13 @@ interface OriginalPayment {
     checkoutUrl: string;
     orderCode: string;
 }
+
+export interface VenueCard {
+    venue_id: string;
+    name: string;
+    address: string;
+    thumbnail: string;
+    cover: string;
+    status: string;
+    payment_status: boolean;
+}

@@ -1,4 +1,4 @@
-import {Venue, VenueImg, VenuePayment} from "@/types/venue"
+import {Venue, VenueCard, VenueImg, VenuePayment} from "@/types/venue"
 import { getAccessTokenFormLocalStorage } from "./utils";
 import { Booking, BookingStatsResponse } from "@/types/booking";
 import { Field } from "@/types/field";
@@ -25,14 +25,14 @@ async function handleResponse(response: Response) {
 
 
 // Function to fetch all venues
-export async function fetchVenues(): Promise<Venue[]> {
+export async function fetchVenues(): Promise<VenueCard[]> {
   try {
-    const response = await fetch(`${API_BASE_URL}/venues`, {
+    const response = await fetch(`${API_BASE_URL}/venues/owner`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
-        // Authorization: `Bearer ${token}`
+        Authorization: `Bearer ${token}`
       },
     })
 
