@@ -30,6 +30,7 @@ export type PaymentInf = {
     bank_name: string;
     bank_account: string;
     qr_url: string;
+    message: string;
 }
 
 type CourtSlot = {

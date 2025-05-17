@@ -60,7 +60,7 @@ const PaymentModal = ({
                         </div>
                         <div>
                             <Label>Nội dung:</Label>
-                            <p>{paymentInfo?.booking_id.replaceAll("-", "")}</p>
+                            <p>{paymentInfo?.message.replaceAll("-", "")}</p>
                         </div>
                     </div>
 

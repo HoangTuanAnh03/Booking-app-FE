@@ -29,7 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { AddVenueForm } from "./add-venue-form";
 import authApiRequest from "@/apiRequests/auth";
-import { useUnpaidVenues, useVenues } from "@/queries/useVenue";
+import {  useVenues } from "@/queries/useVenue";
 import {
   Collapsible,
   CollapsibleContent,
@@ -47,11 +47,6 @@ export function DashboardSidebar() {
   const [isLoggingOut] = useState(false);
 
   const { data: venues = [], isLoading, error } = useVenues();
-  const {
-    data: unpaidVenues = [],
-    isLoading: isUnpaidLoading,
-    error: unpaidError,
-  } = useUnpaidVenues();
 
   // Filter venues based on search query
 
@@ -82,117 +77,46 @@ export function DashboardSidebar() {
             <Building2 className="h-6 w-6" />
             <h1 className="text-xl font-semibold">AE Booking - Owner</h1>
           </div>
-          <div className="px-2 pb-2">
-            <SidebarInput
-              placeholder="Search venues..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
+          {/*<div className="px-2 pb-2">*/}
+          {/*  <SidebarInput*/}
+          {/*    placeholder="Search venues..."*/}
+          {/*    value={searchQuery}*/}
+          {/*    onChange={(e) => setSearchQuery(e.target.value)}*/}
+          {/*  />*/}
+          {/*</div>*/}
         </SidebarHeader>
         <SidebarContent>
           <Collapsible defaultOpen className="group/collapsible">
             <SidebarGroup>
               <SidebarMenu>
                 {/* Collapsible 1 */}
-                <Collapsible defaultOpen className="group/collapsible">
+                <Collapsible className="group/collapsible">
                   <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton>
-                        Địa điểm của bạn
-                        <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {isLoading ? (
-                          <div className="flex justify-center py-4">
-                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                          </div>
-                        ) : error ? (
-                          <div className="px-2 py-3 text-sm text-destructive">
-                            Error loading venues
-                          </div>
-                        ) : (
-                          <SidebarMenu>
-                            {filteredVenues.length > 0 ? (
-                              filteredVenues.map((venue) => (
-                                <SidebarMenuItem key={venue.venue_id}>
-                                  <SidebarMenuButton
-                                    isActive={currentVenueId === venue.venue_id}
-                                    onClick={() =>
-                                      handleVenueSelect(venue.venue_id)
-                                    }
-                                  >
-                                    <MapPin className="h-4 w-4" />
-                                    <span>{venue.name}</span>
-                                  </SidebarMenuButton>
-                                </SidebarMenuItem>
-                              ))
-                            ) : (
-                              <div className="px-2 py-3 text-sm text-muted-foreground">
-                                No venues found
-                              </div>
-                            )}
-                          </SidebarMenu>
-                        )}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
+                    <Link href="/dashboard">
+                      <SidebarMenuButton>Trang chủ</SidebarMenuButton>
+                    </Link>
                   </SidebarMenuItem>
                 </Collapsible>
-
+                <Collapsible className="group/collapsible">
+                  <SidebarMenuItem>
+                    <Link href="/venue">
+                      <SidebarMenuButton>Danh sách địa điểm</SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                </Collapsible>
+                <Collapsible className="group/collapsible">
+                  <SidebarMenuItem>
+                    <Link href="/venue/stats">
+                      <SidebarMenuButton>Thống kê</SidebarMenuButton>
+                    </Link>
+                  </SidebarMenuItem>
+                </Collapsible>
                 {/* Collapsible 2 */}
                 <Collapsible className="group/collapsible">
                   <SidebarMenuItem>
                     <Link href="/venue/booking">
                       <SidebarMenuButton>Danh sách lịch đặt</SidebarMenuButton>
                     </Link>
-                  </SidebarMenuItem>
-                </Collapsible>
-
-                <Collapsible defaultOpen className="group/collapsible">
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton>
-                        Địa điểm chưa thanh toán
-                        <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {isLoading ? (
-                          <div className="flex justify-center py-4">
-                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                          </div>
-                        ) : error ? (
-                          <div className="px-2 py-3 text-sm text-destructive">
-                            Error loading venues
-                          </div>
-                        ) : (
-                          <SidebarMenu>
-                            {unpaidVenues.length > 0 ? (
-                              unpaidVenues.map((venue) => (
-                                <SidebarMenuItem key={venue.venue_id}>
-                                  <SidebarMenuButton
-                                    // isActive={currentVenueId === venue.venue_id}
-                                    onClick={() =>
-                                      handleUnpaidVenueSelect(venue.venue_id)
-                                    }
-                                  >
-                                    <MapPin className="h-4 w-4" />
-                                    <span>{venue.name}</span>
-                                  </SidebarMenuButton>
-                                </SidebarMenuItem>
-                              ))
-                            ) : (
-                              <div className="px-2 py-3 text-sm text-muted-foreground">
-                                No venues found
-                              </div>
-                            )}
-                          </SidebarMenu>
-                        )}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
                   </SidebarMenuItem>
                 </Collapsible>
               </SidebarMenu>
