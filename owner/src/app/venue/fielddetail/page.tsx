@@ -4,6 +4,6 @@ import FieldDetailManager from "@/components/field-detail-management";
 
 export default function FieldDetailPage() {
   return (
-    <FieldDetailManager />
+    <div className="mt-16"><FieldDetailManager /></div>
   );
 }

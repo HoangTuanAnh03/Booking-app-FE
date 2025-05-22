@@ -15,6 +15,8 @@ export function BookingDashboard() {
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<string | null>(null)
+  const [totalCompletedPrice, setTotalCompletedPrice] = useState<string>('0')
+
 
   useEffect(() => {
     const getBookings = async () => {
@@ -115,7 +117,7 @@ export function BookingDashboard() {
                 <CardDescription>Showing mock data since the API is unavailable.</CardDescription>
               </CardHeader>
               <CardContent>
-                <BookingTable bookings={bookingData.data.bookings} />
+                <BookingTable bookings={bookingData.data.bookings} onTotalPriceChange={(newPrice) => setTotalCompletedPrice(newPrice)} />
 
                 {bookingData.data.pagination && (
                   <div className="mt-4">
@@ -135,7 +137,7 @@ export function BookingDashboard() {
   }
 
   return (
-    <div className="space-y-6 ml-10">
+    <div className="space-y-6 ml-10 mt-16">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Booking Management</h1>
@@ -145,17 +147,22 @@ export function BookingDashboard() {
 
       {bookingData && (
         <>
-          <BookingStats totalCompletedPrice={bookingData.data.total_completed_price} />
-
+          <BookingStats
+            totalCompletedPrice={
+              totalCompletedPrice !== "0"
+                ? totalCompletedPrice
+                : bookingData?.data.total_completed_price || "0"
+            }
+          />
           <Card>
             <CardHeader>
               <CardTitle>Bookings</CardTitle>
               <CardDescription>A list of all bookings with their details and status.</CardDescription>
             </CardHeader>
             <CardContent>
-              <BookingTable bookings={bookingData.data.bookings} />
+              <BookingTable bookings={bookingData.data.bookings} onTotalPriceChange={(newPrice) => setTotalCompletedPrice(newPrice)} />
 
-              {bookingData.data.pagination && (
+              {/* {bookingData.data.pagination && (
                 <div className="mt-4">
                   <Pagination
                     currentPage={bookingData.data.pagination.current_page}
@@ -163,7 +170,7 @@ export function BookingDashboard() {
                     onPageChange={handlePageChange}
                   />
                 </div>
-              )}
+              )} */}
             </CardContent>
           </Card>
         </>

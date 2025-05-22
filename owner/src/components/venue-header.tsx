@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { usePathname, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,95 +9,113 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import { fetchVenueById } from "@/lib/api";
-import type { Venue } from "@/types/venue";
-import fieldApiRequest from "@/apiRequests/field";
-
-interface DashboardHeaderProps {
-  fieldName?: string;
-}
+} from "@/components/ui/breadcrumb"
+import { SidebarTrigger } from "@/components/ui/sidebar"
+import { Separator } from "@/components/ui/separator"
+import { fetchVenueById } from "@/lib/api"
+import type { Venue } from "@/types/venue"
 
 export function DashboardHeader() {
-  const searchParams = useSearchParams();
-  const venueId = searchParams.get("venueId");
-  const fieldId = searchParams.get("fieldId");
-  const [venue, setVenue] = useState<Venue | null>(null);
-  const [fieldName, setFieldName] = useState<string | null>(null);
-  const pathname = usePathname();
-  
-  const isVenuePaymentPage = pathname === "/venuePayment";
-const isFieldDetailPage = pathname?.includes("/venue/fielddetail");
+  const searchParams = useSearchParams()
+  const venueId = searchParams.get("venueId")
+  const [venue, setVenue] = useState<Venue | null>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
     if (venueId) {
       const loadVenue = async () => {
         try {
-          const data = await fetchVenueById(venueId);
-          setVenue(data);
+          const data = await fetchVenueById(venueId)
+          setVenue(data)
         } catch (error) {
-          console.error("Failed to fetch venue:", error);
-        }
-      };
-
-      loadVenue();
-    } else {
-      setVenue(null);
-    }
-  }, [venueId]);
-
-  useEffect(() => {
-    const fetchField = async () => {
-      if (fieldId) {
-        try {
-          const { payload } = await fieldApiRequest.findById(fieldId);
-          setFieldName(payload.data.field_name);
-        } catch (error) {
-          console.error("Lỗi khi fetch field:", error);
+          console.error("Failed to fetch venue:", error)
         }
       }
-    };
 
-    fetchField();
-  }, [fieldId]);
+      loadVenue()
+    } else {
+      setVenue(null)
+    }
+  }, [venueId])
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6">
+    <header className="fixed top-0 z-50 w-full flex h-16 items-center gap-4 border-b bg-background px-6">
       <SidebarTrigger />
       <Separator orientation="vertical" className="h-6" />
       <Breadcrumb>
         <BreadcrumbList>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="/venue">Venue</BreadcrumbLink>
-          </BreadcrumbItem>
-          {venue && (
+          {pathname.startsWith("/venue") && (
             <>
-              {isVenuePaymentPage && (
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/venue">Venue</BreadcrumbLink>
+              </BreadcrumbItem>
+
+              {venue && (
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Venue Payment</BreadcrumbPage>
+                    <BreadcrumbPage>{venue.name}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
               )}
-              <BreadcrumbSeparator />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{venue.name}</BreadcrumbPage>
-              </BreadcrumbItem>
+
+              {pathname.includes("/field") && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Field</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </>
+              )}
+
             </>
           )}
-          {isFieldDetailPage && fieldName && (
+
+          {pathname === "/venue/booking" && (
+            <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Booking</BreadcrumbPage>
+            </BreadcrumbItem>
+            </>
+          )}
+
+          {pathname === "/dashboard" && (
+            <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Dashboard</BreadcrumbPage>
+            </BreadcrumbItem>
+            </>
+          )}
+
+          {pathname === "/venue/stats" && (
+            <>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Stats</BreadcrumbPage>
+            </BreadcrumbItem>
+            </>
+          )}
+
+          {pathname === "/venuePayment" && (
             <>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage>{fieldName}</BreadcrumbPage>
+                <BreadcrumbPage>Venue Payment</BreadcrumbPage>
               </BreadcrumbItem>
+              {/* {venue && (
+                <>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{venue.name}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </>
+              )} */}
             </>
           )}
         </BreadcrumbList>
       </Breadcrumb>
     </header>
-  );
+  )
 }

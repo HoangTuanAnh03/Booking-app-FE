@@ -19,6 +19,7 @@ import { Booking } from "./Booking"
 import { toast } from "@/components/ui/use-toast"
 
 import { lockedSlots, mergeTimeSlot } from "@/lib/api"
+import { useQueryClient } from "@tanstack/react-query";
 
 
 function formatDateToYMD(date: Date): string {
@@ -36,7 +37,7 @@ export function VenueDetails({ venueId }: { venueId: string }) {
   const [isLockingSlots, setIsLockingSlots] = useState(false)
 
   const [isMergingSlots, setIsMergingSlots] = useState(false)
-
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams()
   const router = useRouter()
   const urlFieldId = searchParams.get("fieldid")
@@ -125,7 +126,7 @@ export function VenueDetails({ venueId }: { venueId: string }) {
   }
 
   //Function to merge selected slots
-  const handleMergeSlots = async () => {
+  const handleMergeSlots = async (fieldId: string) => {
     if (selectedTimeslots.size === 0) {
       toast({
         title: "No time slots selected",
@@ -168,6 +169,10 @@ export function VenueDetails({ venueId }: { venueId: string }) {
       });
 
       // Cập nhật state của các slot đã merge
+      await queryClient.invalidateQueries({
+        queryKey: ["getCourtTimeByFieldId", fieldId, formattedDate]
+      });
+
       const newMergedCourtSlots = new Set(mergedCourtSlots);
       selectedTimeslots.forEach((_, courtSlot) => {
         newMergedCourtSlots.add(courtSlot);
@@ -227,7 +232,9 @@ export function VenueDetails({ venueId }: { venueId: string }) {
         title: "Slots locked successfully",
         description: `Successfully locked all selected time slots`,
       })
-
+      await queryClient.invalidateQueries({
+        queryKey: ["getCourtTimeByFieldId", fieldId, formattedDate]
+      });
       // Add all court slots to the locked set
       const newLockedCourtSlots = new Set(lockedCourtSlots)
       selectedTimeslots.forEach((_, courtSlot) => {
@@ -253,8 +260,8 @@ export function VenueDetails({ venueId }: { venueId: string }) {
   if (isLoading) {
     return (
       <div className="space-y-6">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="md:w-2/3">
+        <div className="md:flex-row gap-6">
+          <div className="md:w-3/3">
             <Card>
               <CardHeader className="flex flex-row items-start justify-between">
                 <div>
@@ -265,17 +272,6 @@ export function VenueDetails({ venueId }: { venueId: string }) {
               <CardContent>
                 <Skeleton className="h-[200px] w-full" />
                 <Skeleton className="h-20 w-full mt-4" />
-              </CardContent>
-            </Card>
-          </div>
-          <div className="md:w-1/3 space-y-6">
-            <Card>
-              <CardHeader>
-                <Skeleton className="h-6 w-32" />
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-full" />
               </CardContent>
             </Card>
           </div>
@@ -322,14 +318,14 @@ export function VenueDetails({ venueId }: { venueId: string }) {
                 )}
               </div>
               <div className="flex gap-2">
-                 <Button
-    variant="default"
-    size="sm"
-   onClick={() => router.push(`venue/fields?venueId=${venueId}`)}
-  >
-    <List className="h-4 w-4 mr-1" />
-    View Fields
-  </Button>
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={() => router.push(`venue/fields?venueId=${venueId}`)}
+                >
+                  <List className="h-4 w-4 mr-1" />
+                  View Fields
+                </Button>
                 <Button
                   variant="outline"
                   size="sm"
@@ -370,7 +366,7 @@ export function VenueDetails({ venueId }: { venueId: string }) {
 
                 <Card>
                   <CardContent>
-                    <div className="space-y-12 pt-6">
+                    <div className="space-y-12 pt-6 pl-32">
                       <div className="relative aspect-video max-h-[300px] overflow-hidden rounded-md border flex items-center justify-center">
                         {venueImg && venueImg.length > 0 ? (
                           <>
@@ -505,7 +501,7 @@ export function VenueDetails({ venueId }: { venueId: string }) {
                                         <div className="mt-4">
                                           <Button
                                             className="bg-blue-600 text-white hover:bg-blue-700"
-                                            onClick={handleMergeSlots}
+                                            onClick={() => handleMergeSlots(fieldItem.field_id)}
                                             disabled={isLockingSlots || selectedTimeslots.size == 0}
                                           >
                                             <span className="flex items-center justify-center">

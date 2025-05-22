@@ -9,7 +9,7 @@ export function BookingStats({ totalCompletedPrice }: BookingStatsProps) {
   // Inline price formatting
   const formatPrice = (priceString: string) => {
     const price = Number.parseFloat(priceString.replace(/,/g, ""))
-    return new Intl.NumberFormat("en-US", {
+    return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(price)
