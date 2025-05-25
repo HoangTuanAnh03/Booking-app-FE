@@ -59,7 +59,7 @@ export default function FieldTable({
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6 px-10">
-        <CardTitle className="text-xl font-semibold">Danh sách sân</CardTitle>
+        <CardTitle className="text-xl font-semibold">Danh sách cụm sân</CardTitle>
         <Button onClick={handleAddNew} size="sm">
           <Plus className="w-4 h-4 mr-1.5" />
           Thêm sân

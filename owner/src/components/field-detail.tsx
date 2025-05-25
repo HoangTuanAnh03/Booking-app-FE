@@ -36,42 +36,37 @@ const FieldDetail: FC<FieldDetailProps> = ({ field }) => {
       minute: "2-digit",
     });
 
-  // const handleRefreshOpeningHours = () => {
-  //   console.log("Refreshing opening hours...");
-  // };
-
   return (
-    <div className="container max-w-6xl mx-auto sm:px-6">
-      <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent rounded-2xl p-6 mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              {field.data.field_name}
-            </h1>
-            <p className="text-muted-foreground mt-1">Chi tiết thông tin sân</p>
-          </div>
-          <Badge
-            variant={isActive ? "default" : "destructive"}
-            className="px-4 py-1.5 text-sm font-medium flex items-center gap-2"
-          >
-            {isActive ? (
-              <>
-                <CheckCircle2Icon className="h-4 w-4" />
-                Đang hoạt động
-              </>
-            ) : (
-              <>
-                <XCircleIcon className="h-4 w-4" />
-                Đã khóa
-              </>
-            )}
-          </Badge>
+    <div className="container max-w-6xl mx-auto space-y-8 ">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">{field.data.field_name}</h1>
+          <p className="text-muted-foreground text-sm mt-1">Chi tiết thông tin cụm sân</p>
         </div>
+        <Badge
+          variant={isActive ? "default" : "destructive"}
+          className="text-sm font-medium px-3 py-1.5 flex items-center gap-2"
+        >
+          {isActive ? (
+            <>
+              <CheckCircle2Icon className="h-4 w-4" />
+              Đang hoạt động
+            </>
+          ) : (
+            <>
+              <XCircleIcon className="h-4 w-4" />
+              Đã khóa
+            </>
+          )}
+        </Badge>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
-          <div className="bg-primary/10 px-6 py-4 border-b">
+      {/* Price & Time Info */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Giá */}
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-muted/50 px-6 py-4 border-b">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <CoinsIcon className="h-5 w-5 text-primary" />
               Thông tin giá
@@ -80,7 +75,7 @@ const FieldDetail: FC<FieldDetailProps> = ({ field }) => {
           <CardContent className="p-6">
             <div className="flex justify-between items-center">
               <span className="text-muted-foreground">Giá niêm yết</span>
-              <span className="text-2xl font-bold text-primary">
+              <span className="text-xl font-bold text-primary">
                 {field.data.default_price
                   ? formatCurrency(Number(field.data.default_price))
                   : "Chưa có giá"}
@@ -89,8 +84,9 @@ const FieldDetail: FC<FieldDetailProps> = ({ field }) => {
           </CardContent>
         </Card>
 
-        <Card className="shadow-md hover:shadow-lg transition-shadow duration-300">
-          <div className="bg-primary/10 px-6 py-4 border-b">
+        {/* Thời gian */}
+        <Card className="shadow-sm hover:shadow-md transition-shadow">
+          <div className="bg-muted/50 px-6 py-4 border-b">
             <h2 className="text-lg font-semibold flex items-center gap-2">
               <CalendarDaysIcon className="h-5 w-5 text-primary" />
               Thông tin thời gian
@@ -102,9 +98,7 @@ const FieldDetail: FC<FieldDetailProps> = ({ field }) => {
                 <CalendarIcon className="h-4 w-4" />
                 Ngày tạo
               </div>
-              <span className="font-medium">
-                {formatDate(field.data.created_at)}
-              </span>
+              <span className="font-medium">{formatDate(field.data.created_at)}</span>
             </div>
             <Separator />
             <div className="flex justify-between items-center">
@@ -112,26 +106,22 @@ const FieldDetail: FC<FieldDetailProps> = ({ field }) => {
                 <CalendarDaysIcon className="h-4 w-4" />
                 Cập nhật lần cuối
               </div>
-              <span className="font-medium">
-                {formatDate(field.data.updated_at)}
-              </span>
+              <span className="font-medium">{formatDate(field.data.updated_at)}</span>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="shadow-md">
-        <div className="bg-primary/10 px-6 py-4 border-b">
+      {/* Lịch hoạt động */}
+      <Card className="shadow-sm hover:shadow-md transition-shadow">
+        <div className="bg-muted/50 px-6 py-4 border-b">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <ClockIcon className="h-5 w-5 text-primary" />
             Lịch hoạt động
           </h2>
         </div>
         <CardContent className="p-6">
-          <FieldOpeningHours
-            fieldId={field.data.field_id}
-            // refreshOpeningHours={handleRefreshOpeningHours}
-          />
+          <FieldOpeningHours fieldId={field.data.field_id} />
         </CardContent>
       </Card>
     </div>

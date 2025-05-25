@@ -14,10 +14,15 @@ import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
 import { fetchVenueById } from "@/lib/api"
 import type { Venue } from "@/types/venue"
+import type { Field } from "@/types/field"
 
-export function DashboardHeader() {
+interface DashboardHeaderProps {
+  field?: Field | null;
+}
+
+export function DashboardHeader({ field }: DashboardHeaderProps) {
   const searchParams = useSearchParams()
-  const venueId = searchParams.get("venueId")
+  const venueId =  searchParams.get("venueId") ?? field?.venue_id
   const [venue, setVenue] = useState<Venue | null>(null)
   const pathname = usePathname()
 
@@ -63,7 +68,7 @@ export function DashboardHeader() {
                 <>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbPage>Field</BreadcrumbPage>
+                    <BreadcrumbPage>{field?.field_name ?? "Field"}</BreadcrumbPage>
                   </BreadcrumbItem>
                 </>
               )}

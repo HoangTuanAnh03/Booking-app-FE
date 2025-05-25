@@ -113,7 +113,7 @@ const handleSave = async () => {
     field_prices: mergedPrices,
   };
 
-  console.log("Dữ liệu gửi lên:", payload);
+  // console.log("Dữ liệu gửi lên:", payload);
 
   try {
     await saveMutation.mutateAsync(payload);

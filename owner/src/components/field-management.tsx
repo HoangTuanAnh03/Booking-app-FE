@@ -19,9 +19,6 @@ export default function FieldManagement() {
   const [openDialog, setOpenDialog] = useState(false);  // Trạng thái để kiểm soát dialog thêm sân
   const [selectedField, setSelectedField] = useState<FieldItemType | null>(null);
 
-  const [selectedFieldDetail, setSelectedFieldDetail] = useState<FieldItemType | null>(null);
-  const [openDetailDialog, setOpenDetailDialog] = useState(false);
-
   // Trạng thái để quản lý dialog sửa sân
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [currentFieldId, setCurrentFieldId] = useState<string>("");
@@ -45,13 +42,6 @@ export default function FieldManagement() {
       </>
     );
   }
-
-  // Hàm mở dialog chi tiết
-  const handleViewDetail = (field: FieldItemType) => {
-    setSelectedFieldDetail(field);
-    setOpenDetailDialog(true);  // Mở dialog chi tiết
-  };
-
   // Hàm mở dialog sửa
   const handleEditField = (fieldId: string) => {
     setCurrentFieldId(fieldId);
@@ -79,15 +69,6 @@ export default function FieldManagement() {
 
       {/* Dialog thêm sân */}
       <FieldDialog venueId={venueId} openDialog={openDialog} onClose={() => setOpenDialog(false)} fetchFields={fetchFields} />
-
-      {/* Dialog chi tiết sân
-      {selectedFieldDetail && (
-        <FieldDetailDialog
-          open={openDetailDialog}
-          onClose={() => setOpenDetailDialog(false)}
-          field={selectedFieldDetail}
-        />
-      )} */}
 
       {/* Dialog sửa sân */}
       {openEditDialog && (

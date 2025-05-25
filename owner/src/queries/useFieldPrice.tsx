@@ -50,17 +50,13 @@ export const useFieldPrice = (fieldId: string) => {
   };
 };
 export const useSaveFieldPrices = (fieldId: string) => {
-  console.log("useSaveFieldPrices", fieldId);
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (data: FieldPriceSavePayload) =>
       {
-      console.log("Dữ liệu truyền vào mutationFn:", data);
       return fieldApiRequest.saveFieldPrices(fieldId, data) },
-      // fieldApiRequest.saveFieldPrices(fieldId, data),  
     onSuccess: () => {
-      // Cập nhật lại dữ liệu sau khi lưu
       queryClient.invalidateQueries({ queryKey: ["fieldPrices", fieldId] });
     },
     onError: (error) => {

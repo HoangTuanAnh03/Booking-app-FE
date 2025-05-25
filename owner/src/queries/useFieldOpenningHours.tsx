@@ -28,7 +28,7 @@ export function useFieldOpeningHours(fieldId: string) {
 
   const createOpeningHours = useMutation({
     mutationFn: async (data: CreateOpeningHoursSchemaType) => {
-      console.log("Creating opening hours with data:", data);
+      // console.log("Creating opening hours with data:", data);
       await fieldApiRequest.createOpeningHours(data);
     },
     onSuccess: () => {
